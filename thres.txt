@@ -1,0 +1,14 @@
+8x16
+freq10
+
+5x16
+freq10
+
+8x20
+freq5
+
+6x20
+freq10
+
+10x20
+freq1? faudrait moins
