@@ -5,6 +5,8 @@ import scipy.signal as signal
 import pywt
 import os
 
+## dernier usage : ajustement find_peaks_kuhn, test seuils /fig_peaks1/ /fig_freq1/
+
 directory='D:/Yann/Desktop/stabien/'
 filename='8x20_60g (1).csv'
 delimiter=';'
@@ -74,6 +76,21 @@ def running_freq(t,num,peaks,T):
     f = [nombre_pics_porte(t,peaks,t0,T)/T for t0 in f_t]
     return f_t, f
 
+def find_peaks_kuhn(v,thres=0.05,graphCWT=False,graphPeaks=False):
+    cwtmatr, freqs = pywt.cwt(v,np.arange(1,10),'mexh')
+    peaks = signal.find_peaks(cwtmatr[3],height=0)[0]
+    vpeaks = sorted([abs(cwtmatr[3][p]) for p in peaks],reverse=True)
+    peaks = [p for p in peaks if cwtmatr[-1][int(p)]>0 and cwtmatr[3][int(p)]>np.average(vpeaks)*thres]
+
+    if graphCWT:
+        plt.figure(figsize=(25,5))
+        plt.imshow(cwtmatr, extent=[0, 1, 1, 10], cmap='PRGn', aspect='auto',vmax=abs(cwtmatr).max(), vmin=-abs(cwtmatr).max())
+        if graphPeaks:
+            for p in peaks:
+                plt.axvline(x=p/len(cwtmatr[3]),alpha=0.2)
+        plt.title("thres="+str(thres))
+    return peaks
+
 # tab = read_csv(directory+filename, delimiter)
 #
 # #tab = np.array(tab[2:])
@@ -93,10 +110,10 @@ for dirName, subdirList, fileList in os.walk(directory, topdown=False):
                 x = [tab[i][1] for i in range(len(tab))]
                 y = [tab[i][2] for i in range(len(tab))]
                 v = vitesse(t,x,y)
-                for thres in [0.01,0.02,0.05,0.1]:
-                    peaks=find_peaks(v,thres=thres,graphCWT=True,graphPeaks=True)
+                for thres in [0.01,0.02,0.05,0.1,0.15,0.25,0.4,0.5]:
+                    peaks=find_peaks_kuhn(v,thres=thres,graphCWT=True,graphPeaks=True)
                     plt.title(fname+" ; thres="+str(thres))
-                    plt.savefig(fname=directory+"fig_peaks/"+fname+"_freq"+str(int(thres*100))+".png",bbox_inches='tight',pad_inches=0)
+                    plt.savefig(fname=directory+"fig_peaks1/"+fname+"_freq"+str(int(thres*100))+".png",bbox_inches='tight',pad_inches=0)
                     #per_t,per=periode_apparente(t,peaks)
                     freq_t,freq=running_freq(t,int(t[-1]-t[0]),peaks,10)
                     plt.figure()
@@ -106,6 +123,6 @@ for dirName, subdirList, fileList in os.walk(directory, topdown=False):
                     plt.ylabel("Jerk frequency (Hz)")
                     plt.xlabel("Time (s)")
                     plt.title(fname+" ; thres="+str(thres))
-                    plt.savefig(fname=directory+"fig_freq/"+fname+"_freq"+str(int(thres*100))+".png",bbox_inches='tight',pad_inches=0)
+                    plt.savefig(fname=directory+"fig_freq1/"+fname+"_freq"+str(int(thres*100))+".png",bbox_inches='tight',pad_inches=0)
                     plt.close()
 #plt.show()

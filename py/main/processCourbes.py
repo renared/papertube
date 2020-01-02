@@ -21,11 +21,11 @@ def find_peaks(v,thres=0.05,graphCWT=False,graphPeaks=False):
         plt.title("thres="+str(thres))
     return peaks
 
-def find_peaks_kuhn(v,thres=0.05,graphCWT=False,graphPeaks=False):
+def find_peaks_kuhn(v,thres=0.5,graphCWT=False,graphPeaks=False):
     cwtmatr, freqs = pywt.cwt(v,np.arange(1,10),'mexh')
     peaks = signal.find_peaks(cwtmatr[3],height=0)[0]
     vpeaks = sorted([abs(cwtmatr[3][p]) for p in peaks],reverse=True)
-    peaks = [p for p in peaks if cwtmatr[-1][int(p)]>0 and cwtmatr[3][int(p)]>np.average(vpeaks[2:len(vpeaks)//10])*thres]
+    peaks = [p for p in peaks if cwtmatr[-1][int(p)]>0 and cwtmatr[3][int(p)]>np.average(vpeaks)*thres] # np.average(vpeaks[2:len(vpeaks)//10])*thres
 
     if graphCWT:
         plt.figure(figsize=(25,5))
@@ -54,19 +54,14 @@ for dirName, subdirList, fileList in os.walk(directory, topdown=False):
                 npzf = np.load(os.path.join(dirName, fname))
                 t = npzf['t']
                 v = npzf['d2']
-                for thres in [0.1]:
-                    peaks=find_peaks_kuhn(v,thres=thres,graphCWT=False,graphPeaks=True)
-                    #plt.title(fname+" ; thres="+str(thres))
-                    #plt.savefig(fname=directory+"fig_peaks/"+fname+"_freq"+str(int(thres*100))+".png",bbox_inches='tight',pad_inches=0)
-                    #per_t,per=periode_apparente(t,peaks)
-                    freq_t,freq=running_freq(t,int(t[-1]-t[0]),peaks,10)
-                    plt.figure(figsize=(16,8))
-                    #plt.scatter(per_t,per,c=per_t,cmap='plasma')
-                    plt.plot(freq_t,freq)
-                    plt.ylim(0,3)
-                    plt.ylabel("Jerk frequency (Hz)")
-                    plt.xlabel("Time (s)")
-                    plt.title(fname+" ; thres="+str(thres))
-                    #plt.savefig(fname=directory+"fig_freq_kuhn/"+fname+"_kuhn_freq"+str(int(thres*100))+".png",bbox_inches='tight',pad_inches=0)
-                    #plt.close()
-plt.show()
+                peaks=find_peaks_kuhn(v,thres=0.5,graphCWT=False,graphPeaks=True)
+                freq_t,freq=running_freq(t,int(t[-1]-t[0]),peaks,10)
+                plt.figure(figsize=(16,8))
+                plt.plot(freq_t,freq)
+                plt.ylim(0,5)
+                plt.ylabel("Jerk frequency (Hz)")
+                plt.xlabel("Time (s)")
+                plt.title(fname)
+                plt.savefig(fname=directory+"fig_freq_main/"+fname+"_freq"+".png",bbox_inches='tight',pad_inches=0)
+                plt.close()
+#plt.show()
