@@ -9,7 +9,7 @@ inputdir='D:/Yann/Desktop/stabien/video/'
 outputdir='D:/Yann/Desktop/stabien/video_data/'
 
 
-def processDir(inputdir,outputdir,squaresize=200):
+def processDir(inputdir,outputdir,squaresize=0):
     q=0 # déjà existants
     r=0 # nouveaux
     for dirName, subdirList, fileList in os.walk(inputdir, topdown=False):

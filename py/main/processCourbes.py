@@ -48,20 +48,21 @@ def running_freq(t,num,peaks,T):
     f = [nombre_pics_porte(t,peaks,t0,T)/T for t0 in f_t]
     return f_t, f
 
-for dirName, subdirList, fileList in os.walk(directory, topdown=False):
-        for fname in fileList:
-            if fname.endswith("_data.npz"):
-                npzf = np.load(os.path.join(dirName, fname))
-                t = npzf['t']
-                v = npzf['d2']
-                peaks=find_peaks_kuhn(v,thres=0.5,graphCWT=False,graphPeaks=True)
-                freq_t,freq=running_freq(t,int(t[-1]-t[0]),peaks,10)
-                plt.figure(figsize=(16,8))
-                plt.plot(freq_t,freq)
-                plt.ylim(0,5)
-                plt.ylabel("Jerk frequency (Hz)")
-                plt.xlabel("Time (s)")
-                plt.title(fname)
-                plt.savefig(fname=directory+"fig_freq_main/"+fname+"_freq"+".png",bbox_inches='tight',pad_inches=0)
-                plt.close()
+def processDataDir(directory):
+    for dirName, subdirList, fileList in os.walk(directory, topdown=False):
+            for fname in fileList:
+                if fname.endswith("_data.npz"):
+                    npzf = np.load(os.path.join(dirName, fname))
+                    t = npzf['t']
+                    v = npzf['d2']
+                    peaks=find_peaks_kuhn(v,thres=0.5,graphCWT=False,graphPeaks=True)
+                    freq_t,freq=running_freq(t,int(t[-1]-t[0]),peaks,8)
+                    plt.figure(figsize=(16,8))
+                    plt.plot(freq_t,freq)
+                    plt.ylim(0,5)
+                    plt.ylabel("Jerk frequency (Hz)")
+                    plt.xlabel("Time (s)")
+                    plt.title(fname)
+                    plt.savefig(fname=directory+"fig_freq_main/"+fname+"_freq"+".png",bbox_inches='tight',pad_inches=0)
+                    plt.close()
 #plt.show()
