@@ -45,7 +45,7 @@ def processDir(inputdir,outputdir,squaresize=0):
                                 break
 
                         t=np.linspace(0,(len(d2)+1)/fps,num=len(d2)+1)[1:]
-                        np.savez(outputdir+fname+"_data", t=t, d2=d2)
+                        np.savez(outputdir+"/"+fname+"_data", t=t, d2=d2)
                         r+=1
                         print("OK")
     print(q, "were already processed,",r,"new files.")

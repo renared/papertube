@@ -25,7 +25,7 @@ def find_peaks_kuhn(v,thres=0.5,graphCWT=False,graphPeaks=False):
     cwtmatr, freqs = pywt.cwt(v,np.arange(1,10),'mexh')
     peaks = signal.find_peaks(cwtmatr[3],height=0)[0]
     vpeaks = sorted([abs(cwtmatr[3][p]) for p in peaks],reverse=True)
-    peaks = [p for p in peaks if cwtmatr[-1][int(p)]>0 and cwtmatr[3][int(p)]>np.average(vpeaks)*thres] # np.average(vpeaks[2:len(vpeaks)//10])*thres
+    peaks = [p for p in peaks if cwtmatr[-1][int(p)]>0 and cwtmatr[3][int(p)]>np.average(vpeaks[2:])*thres] # np.average(vpeaks[2:len(vpeaks)//10])*thres
 
     if graphCWT:
         plt.figure(figsize=(25,5))
@@ -55,7 +55,10 @@ def processDataDir(directory):
                     npzf = np.load(os.path.join(dirName, fname))
                     t = npzf['t']
                     v = npzf['d2']
-                    peaks=find_peaks_kuhn(v,thres=0.5,graphCWT=False,graphPeaks=True)
+                    peaks=find_peaks_kuhn(v,thres=0.5,graphCWT=True,graphPeaks=True)
+                    plt.title(fname)
+                    plt.savefig(fname="../../fig_peaks_main/"+fname+"_peaks"+".png",bbox_inches='tight',pad_inches=0)
+                    plt.close()
                     freq_t,freq=running_freq(t,int(t[-1]-t[0]),peaks,8)
                     plt.figure(figsize=(16,8))
                     plt.plot(freq_t,freq)
@@ -63,6 +66,10 @@ def processDataDir(directory):
                     plt.ylabel("Jerk frequency (Hz)")
                     plt.xlabel("Time (s)")
                     plt.title(fname)
-                    plt.savefig(fname=directory+"fig_freq_main/"+fname+"_freq"+".png",bbox_inches='tight',pad_inches=0)
+                    plt.savefig(fname="../../fig_freq_main/"+fname+"_freq"+".png",bbox_inches='tight',pad_inches=0)
                     plt.close()
 #plt.show()
+
+def readData(datafname):
+    npzf = np.load(datafname)
+    return npzf['t'], npzf['d2']
