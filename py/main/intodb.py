@@ -1,41 +1,43 @@
 import sqlite3
 import os
 
+
 DBfile = "D:/Yann/Desktop/stabien/papertube.db"
 conn = sqlite3.connect(DBfile)
 cur = conn.cursor()
 
-def intoDB(directory,sameConfAs=None):
-    if sameConfAs!=None:
-        cur.execute("SELECT COUNT(*) FROM essai WHERE nomFichier=?",(sameConfAs,))
+def intoDB(directory,copy=[]):
+    '''exemple : copy=['nomFichier','nomPapier','nomSurface'] # nomFichier en premier !!
+    '''
+    if len(copy)>0:
+        cur.execute("SELECT COUNT(*) FROM essai WHERE nomFichier=?",(copy[0],))
         if list(cur)[0][0] > 0 :
-            pass
-        else : print("Le fichier de preset n'existe pas dans la DB.")
+            def sumStr(l):
+                s=""
+                for x in l:
+                    s+=l
+                    s+=','
+                return s[:-1]
+            buf = sumStr(copy)
+            cur.execute("SELECT ? FROM essai WHERE nomFichier=?",(buf,copy[0]))
+        else : print("Le fichier copy[0] n'existe pas dans la DB.")
 
     m,n = 0,0
     t1 = time()
-    for dirName, subdirList, fileList in os.walk(path, topdown=False):
+    for dirName, subdirList, fileList in os.walk(directory, topdown=False):
         for fname in fileList:
-            if fname.endswith(".wav"):
-                cur.execute("SELECT COUNT(*) FROM songs WHERE filename=?", (fname,))
+            if fname.endswith(".mp4") or fname.endswith(".m4v"):
+                entree = {}
+                for field in ["nomPapier","nomCondexp","nomSurface","diametre","longueur","largeur","dureeHold"]:
+                    print(field,":")
+                    entree[field]=copy[field] if field in copy else input()
+                cur.execute("SELECT COUNT(*) FROM essai WHERE nomFichier=?", (fname,))
                 if list(cur)[0][0] > 0 :
                     print(os.path.join(dirName, fname),"déjà dans la BD")
                     m+=1
                 else :
                     print("Importation de",os.path.join(dirName, fname))
-                    sampFreq, snd = wav.read(os.path.join(dirName, fname))
-                    snd0 = downsample(mix_channels(snd),DOWNSAMPLING_FACTOR)
-                    sampFreq0 = sampFreq//DOWNSAMPLING_FACTOR
-                    t,f,Sxx = spectrogram(snd0, sampFreq0, FFTSIZE, OVERLAP)
-                    pks = peaks(t,f,Sxx)
-                    hts = hashpeaks(t,f,pks)
-                    data = [(fname,)]
-                    for item in data:
-                        cur.execute("INSERT INTO songs(filename) VALUES(?)", item)
-                    cur.execute("SELECT id FROM songs WHERE filename = ?", (fname,))
-                    id = list(cur)[0][0]
-                    for item in [(id, ht[0], ht[1]) for ht in hts]:
-                        cur.execute("INSERT INTO hashes(idSong,t,h) VALUES(?,?,?)", item)
+                    cur.execute("INSERT INTO essai(nomFichier,nomPapier,nomCondexp,nomSurface,diametre,longueur,largeur,dureeHold) VALUES(?,?,?,?,?,?,?,?)",(fname,entree['nomPapier'],entree['nomCondexp'],entree['nomSurface'],float(entree['diametre']),float(entree['longueur']),float(entree['largeur']),float(entree['dureeHold'])))
                     conn.commit()
                     n+=1
     t2 = time()
