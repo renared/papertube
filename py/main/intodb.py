@@ -1,5 +1,6 @@
 import sqlite3
 import os
+from time import time
 
 
 DBfile = "D:/Yann/Desktop/stabien/papertube.db"
@@ -23,14 +24,13 @@ def intoDB(directory,copy=[]):
         else : print("Le fichier copy[0] n'existe pas dans la DB.")
 
     m,n = 0,0
-    t1 = time()
+    entree = {}
+    for field in ["nomPapier","nomCondexp","nomSurface","diametre","longueur","largeur","dureeHold"]:
+        print(field,":")
+        entree[field]=copy[field] if field in copy else input()
     for dirName, subdirList, fileList in os.walk(directory, topdown=False):
         for fname in fileList:
             if fname.endswith(".mp4") or fname.endswith(".m4v"):
-                entree = {}
-                for field in ["nomPapier","nomCondexp","nomSurface","diametre","longueur","largeur","dureeHold"]:
-                    print(field,":")
-                    entree[field]=copy[field] if field in copy else input()
                 cur.execute("SELECT COUNT(*) FROM essai WHERE nomFichier=?", (fname,))
                 if list(cur)[0][0] > 0 :
                     print(os.path.join(dirName, fname),"déjà dans la BD")
@@ -40,7 +40,5 @@ def intoDB(directory,copy=[]):
                     cur.execute("INSERT INTO essai(nomFichier,nomPapier,nomCondexp,nomSurface,diametre,longueur,largeur,dureeHold) VALUES(?,?,?,?,?,?,?,?)",(fname,entree['nomPapier'],entree['nomCondexp'],entree['nomSurface'],float(entree['diametre']),float(entree['longueur']),float(entree['largeur']),float(entree['dureeHold'])))
                     conn.commit()
                     n+=1
-    t2 = time()
     print(m,"musiques étaient déjà importées dans la BD")
     print(n,"musiques ont bien été importées dans la BD")
-    if DEBUG_TIME_GLOBAL_IMPORT and n>0 : print("=== Durée totale de l'importation :",t2-t1," === Durée moyenne :",(t2-t1)/n,"par fichier")
