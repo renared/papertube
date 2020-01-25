@@ -1,8 +1,20 @@
-# Papertube !
+﻿# Papertube !
 
 **Bien tout lire (rapidement en diagonale) avant de commencer à filmer et tout**
 
 ## Keskifofer
+
+### Stream caméra vers pc
+
+Si tu as moyen de tester ce serait cool, avec mon portable c'est relativement pas mal (j'ai 28 fps). Il faut que le tél et le PC soient sur le même wifi.
+
+Avec Droidcam X Pro (payant, faut passer par Aptoide)
+
+dans les paramètres de l'appli, activer le Boost FPS
+
+sur VLC, ouvrir un flux réseau, mettre le "http://ip:4747/video" comme dit dans l'appli
+
+sur VLC, personnaliser l'interface pour mettre le bouton Enregistrer dans la barre d'outils, puis enregistrer la vidéo avec ce bouton...
 
 ### Prérequis
 
