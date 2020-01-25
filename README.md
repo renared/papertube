@@ -24,7 +24,9 @@ cd /mnt/lettre-du-disque/chemin-windows-vers-tes-documents
 git clone https://gitlab.ensimag.fr/bourdiny/papertube.git
 ```
 pull au cas où à chaque fois que tu reviens sur le projet
+
 commit régulièrement (`git commit -m "description du commit"`)
+
 push régulièrement
 
 ### Utilisation, avec Pyzo
