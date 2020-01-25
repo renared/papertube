@@ -5,8 +5,8 @@ import scipy.signal as signal
 import matplotlib.pyplot as plt
 import os
 
-inputdir='D:/Yann/Desktop/stabien/video/'
-outputdir='D:/Yann/Desktop/stabien/video_data/'
+inputdir='../../video/'
+outputdir='../../video_data/'
 
 
 def processDir(inputdir,outputdir,squaresize=0):

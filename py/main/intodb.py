@@ -3,7 +3,7 @@ import os
 from time import time
 
 
-DBfile = "D:/Yann/Desktop/stabien/papertube.db"
+DBfile = "../../papertube.db"
 conn = sqlite3.connect(DBfile)
 cur = conn.cursor()
 

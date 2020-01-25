@@ -5,7 +5,7 @@ import scipy.signal as signal
 import pywt
 import os
 
-directory='D:/Yann/Desktop/stabien/'
+directory='../../'
 
 def find_peaks(v,thres=0.05,graphCWT=False,graphPeaks=False):
     cwtmatr, freqs = pywt.cwt(v,np.arange(1,10),'mexh')
