@@ -62,13 +62,13 @@ fais un sous-dossier dans video/ (que j'appelerai ici *banane*) et mets toutes l
 
 dans Pyzo,
 ```
-processDir(../../video/banane/, ../../video_data/)
+processDir("video/banane/", "video_data/")
 ```
 
 #### Importation dans la DB : papertube.db
 
 ```
-intoDB(../../video/banane)
+intoDB("video/banane")
 ```
 
 cela te demandera de renseigner tous les paramètres relatifs à ta série de mesures (tous les fichiers dans *banane/* auront les mêmes paramètres) ; je te conseille de jeter un oeil à la structure de la DB
@@ -77,7 +77,11 @@ cela te demandera de renseigner tous les paramètres relatifs à ta série de me
 
 s'ils n'existent pas, crée les dossiers fig_peaks_main et fig_freq_main à la racine du projet
 ```
-processDataDir(../../video_data/)
+processDataDir("video_data/")
 ```
 
-tu retrouveras dans fig_peaks_main/ et fig_freq_main/ les résultats (respectivement les graphes de détection des à-coups, les courbes temps-fréquence)
+je viens de changer la fonction, il faut pour chaque fichier vérifier si la détection des pics est correcte, au cas où il faudrait définir le seuil manuellement, puis ça met à jour la DB
+
+tu retrouveras (par défaut) dans fig_peaks_main/ et fig_freq_main/ les résultats (respectivement les graphes de détection des à-coups, les courbes temps-fréquence)
+
+**Remarque de fin** : ne pas oublier dans les chemins de dossiers le '/' à la fin !

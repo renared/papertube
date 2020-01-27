@@ -5,13 +5,15 @@ import scipy.signal as signal
 import matplotlib.pyplot as plt
 import os
 
-inputdir='../../video/'
-outputdir='../../video_data/'
+inputdir='video/'
+outputdir='video_data/'
 
 
 def processDir(inputdir,outputdir,squaresize=0):
     q=0 # déjà existants
     r=0 # nouveaux
+    inputdir="../../"+inputdir
+    outputdir="../../"+outputdir
     for dirName, subdirList, fileList in os.walk(inputdir, topdown=False):
             for fname in fileList:
                 if fname.endswith(".mp4"):

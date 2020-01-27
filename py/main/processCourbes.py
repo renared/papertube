@@ -4,8 +4,12 @@ import numpy as np
 import scipy.signal as signal
 import pywt
 import os
+import sqlite3
 
 directory='../../'
+DBfile = "../../papertube.db"
+conn = sqlite3.connect(DBfile)
+cur = conn.cursor()
 
 def find_peaks(v,thres=0.05,graphCWT=False,graphPeaks=False):
     cwtmatr, freqs = pywt.cwt(v,np.arange(1,10),'mexh')
@@ -48,7 +52,7 @@ def running_freq(t,num,peaks,T):
     f = [nombre_pics_porte(t,peaks,t0,T)/T for t0 in f_t]
     return f_t, f
 
-def processDataDir(directory):
+def processDataDir_old(directory):
     for dirName, subdirList, fileList in os.walk(directory, topdown=False):
             for fname in fileList:
                 if fname.endswith("_data.npz"):
@@ -69,6 +73,46 @@ def processDataDir(directory):
                     plt.savefig(fname="../../fig_freq_main/"+fname+"_freq"+".png",bbox_inches='tight',pad_inches=0)
                     plt.close()
 #plt.show()
+
+def processDataDir(directory,fig_peaks_dir="fig_peaks_main/",fig_freq_dir="fig_freq_main/"):
+    for dirName, subdirList, fileList in os.walk(directory, topdown=False):
+            for fname in fileList:
+                if fname.endswith("_data.npz"):
+                    cur.execute("SELECT id FROM essai WHERE nomFichier=?",(fname.replace("_data.npz",""),))
+                    l = list(cur)
+                    if len(l)==0 :
+                        print("Le fichier d'essai correspondant à",fname,"n'a pas préalablement été importé.")
+                    else :
+                        if len(l)>1 : print("Attention, plusieurs essais ont le même nom de fichier (",fname,").")
+                        npzf = np.load(os.path.join(dirName, fname))
+                        t = npzf['t']
+                        v = npzf['d2']
+                        peaks=find_peaks_kuhn(v,thres=0.5,graphCWT=True,graphPeaks=True)
+                        plt.title(fname)
+                        print("La détection des pics est-elle correcte ? (fermer le plot avant de répondre) (o/n)")
+                        plt.show()
+                        while (input()!="o"):
+                            plt.close()
+                            print("Choisir un seuil :")
+                            s = float(input())
+                            peaks=find_peaks(v,thres=s,graphCWT=True,graphPeaks=True)
+                            plt.title(fname)
+                            print("Et maintenant ? (fermer le plot avant de répondre) (o/n)")
+                            plt.show()
+                        plt.savefig(fname="../../"+fig_peaks_dir+fname+"_peaks"+".png",bbox_inches='tight',pad_inches=0)
+                        plt.close()
+                        freq_t,freq=running_freq(t,int(t[-1]-t[0]),peaks,8)
+                        plt.figure(figsize=(16,8))
+                        plt.plot(freq_t,freq)
+                        plt.ylim(0,5)
+                        plt.ylabel("Jerk frequency (Hz)")
+                        plt.xlabel("Time (s)")
+                        plt.title(fname)
+                        plt.savefig(fname="../../"+fig_freq_dir+fname+"_freq"+".png",bbox_inches='tight',pad_inches=0)
+                        plt.close()
+                        cur.execute("INSERT INTO essai_res(idEssai,fichierFreq) VALUES(?,?)",(l[0][0],fig_freq_dir+fname+"_freq"+".png"))
+                        conn.commit()
+                        
 
 def readData(datafname):
     npzf = np.load(datafname)
