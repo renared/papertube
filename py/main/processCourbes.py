@@ -90,6 +90,7 @@ def processDataDir(directory,fig_peaks_dir="fig_peaks_main/",fig_freq_dir="fig_f
                         peaks=find_peaks_kuhn(v,thres=0.5,graphCWT=True,graphPeaks=True)
                         plt.title(fname)
                         print("La détection des pics est-elle correcte ? (fermer le plot avant de répondre) (o/n)")
+                        fig=plt.gcf()
                         plt.show()
                         while (input()!="o"):
                             plt.close()
@@ -98,8 +99,9 @@ def processDataDir(directory,fig_peaks_dir="fig_peaks_main/",fig_freq_dir="fig_f
                             peaks=find_peaks(v,thres=s,graphCWT=True,graphPeaks=True)
                             plt.title(fname)
                             print("Et maintenant ? (fermer le plot avant de répondre) (o/n)")
+                            fig=plt.gcf()
                             plt.show()
-                        plt.savefig(fname="../../"+fig_peaks_dir+fname+"_peaks"+".png",bbox_inches='tight',pad_inches=0)
+                        fig.savefig(fname="../../"+fig_peaks_dir+fname+"_peaks"+".png",bbox_inches='tight',pad_inches=0)
                         plt.close()
                         freq_t,freq=running_freq(t,int(t[-1]-t[0]),peaks,8)
                         plt.figure(figsize=(16,8))
