@@ -5,7 +5,12 @@ import scipy.signal as signal
 import pywt
 import os
 import sqlite3
+import tkinter as tk
+from tkinter.messagebox import *
+from tkinter.simpledialog import *
 
+root_window = tk.Tk()
+root_window.withdraw()
 directory='../../'
 DBfile = "../../papertube.db"
 conn = sqlite3.connect(DBfile)
@@ -17,7 +22,7 @@ def find_peaks(v,thres=0.05,graphCWT=False,graphPeaks=False):
     peaks = [p for p in peaks if cwtmatr[-1][int(p)]>0 and cwtmatr[3][int(p)]>abs(cwtmatr).max()*thres]
 
     if graphCWT:
-        plt.figure(figsize=(12,2))
+        plt.figure(figsize=(18,4))
         plt.imshow(cwtmatr, extent=[0, 1, 1, 10], cmap='PRGn', aspect='auto',vmax=abs(cwtmatr).max(), vmin=-abs(cwtmatr).max())
         if graphPeaks:
             for p in peaks:
@@ -32,7 +37,7 @@ def find_peaks_kuhn(v,thres=0.5,graphCWT=False,graphPeaks=False):
     peaks = [p for p in peaks if cwtmatr[-1][int(p)]>0 and cwtmatr[3][int(p)]>np.average(vpeaks[2:])*thres] # np.average(vpeaks[2:len(vpeaks)//10])*thres
 
     if graphCWT:
-        plt.figure(figsize=(12,2))
+        plt.figure(figsize=(18,4))
         plt.imshow(cwtmatr, extent=[0, 1, 1, 10], cmap='PRGn', aspect='auto',vmax=abs(cwtmatr).max(), vmin=-abs(cwtmatr).max())
         if graphPeaks:
             for p in peaks:
@@ -91,19 +96,15 @@ def processDataDir(directory,fig_peaks_dir="fig_peaks_main/",fig_freq_dir="fig_f
                         v = npzf['d2']
                         peaks=find_peaks_kuhn(v,thres=0.5,graphCWT=True,graphPeaks=True)
                         plt.title(fname)
-                        print("La détection des pics est-elle correcte ? (fermer le plot avant de répondre) (o/n)")
                         fig=plt.gcf()
                         plt.show()
-                        plt.pause(0.1)
-                        while (input()!="o"):
+                        while (not(askyesno(fname,"La détection des pics est-elle correcte ?"))):
                             plt.close()
                             print("Choisir un seuil :")
-                            s = float(input())
+                            s = askfloat(fname,"Choisir un seuil",minvalue=0.0,maxvalue=1.0)
                             peaks=find_peaks(v,thres=s,graphCWT=True,graphPeaks=True)
                             plt.title(fname)
-                            print("Et maintenant ? (fermer le plot avant de répondre) (o/n)")
                             fig=plt.gcf()
-                            plt.pause(0.1)
                             plt.show()
                         fig.savefig(fname="../../"+fig_peaks_dir+fname+"_peaks"+".png",bbox_inches='tight',pad_inches=0)
                         plt.close()
@@ -118,7 +119,7 @@ def processDataDir(directory,fig_peaks_dir="fig_peaks_main/",fig_freq_dir="fig_f
                         plt.close()
                         cur.execute("INSERT INTO essai_res(idEssai,fichierFreq) VALUES(?,?)",(l[0][0],fig_freq_dir+fname+"_freq"+".png"))
                         conn.commit()
-                        
+
 
 def readData(datafname):
     npzf = np.load(datafname)
