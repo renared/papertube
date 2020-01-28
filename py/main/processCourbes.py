@@ -17,7 +17,7 @@ def find_peaks(v,thres=0.05,graphCWT=False,graphPeaks=False):
     peaks = [p for p in peaks if cwtmatr[-1][int(p)]>0 and cwtmatr[3][int(p)]>abs(cwtmatr).max()*thres]
 
     if graphCWT:
-        plt.figure(figsize=(25,5))
+        plt.figure(figsize=(12,2))
         plt.imshow(cwtmatr, extent=[0, 1, 1, 10], cmap='PRGn', aspect='auto',vmax=abs(cwtmatr).max(), vmin=-abs(cwtmatr).max())
         if graphPeaks:
             for p in peaks:
@@ -32,7 +32,7 @@ def find_peaks_kuhn(v,thres=0.5,graphCWT=False,graphPeaks=False):
     peaks = [p for p in peaks if cwtmatr[-1][int(p)]>0 and cwtmatr[3][int(p)]>np.average(vpeaks[2:])*thres] # np.average(vpeaks[2:len(vpeaks)//10])*thres
 
     if graphCWT:
-        plt.figure(figsize=(25,5))
+        plt.figure(figsize=(12,2))
         plt.imshow(cwtmatr, extent=[0, 1, 1, 10], cmap='PRGn', aspect='auto',vmax=abs(cwtmatr).max(), vmin=-abs(cwtmatr).max())
         if graphPeaks:
             for p in peaks:
@@ -75,6 +75,7 @@ def processDataDir_old(directory):
 #plt.show()
 
 def processDataDir(directory,fig_peaks_dir="fig_peaks_main/",fig_freq_dir="fig_freq_main/"):
+    directory = "../../"+directory
     for dirName, subdirList, fileList in os.walk(directory, topdown=False):
             for fname in fileList:
                 if fname.endswith("_data.npz"):
@@ -84,6 +85,7 @@ def processDataDir(directory,fig_peaks_dir="fig_peaks_main/",fig_freq_dir="fig_f
                         print("Le fichier d'essai correspondant à",fname,"n'a pas préalablement été importé.")
                     else :
                         if len(l)>1 : print("Attention, plusieurs essais ont le même nom de fichier (",fname,").")
+                        print("Fichier :",fname)
                         npzf = np.load(os.path.join(dirName, fname))
                         t = npzf['t']
                         v = npzf['d2']
@@ -92,6 +94,7 @@ def processDataDir(directory,fig_peaks_dir="fig_peaks_main/",fig_freq_dir="fig_f
                         print("La détection des pics est-elle correcte ? (fermer le plot avant de répondre) (o/n)")
                         fig=plt.gcf()
                         plt.show()
+                        plt.pause(0.1)
                         while (input()!="o"):
                             plt.close()
                             print("Choisir un seuil :")
@@ -100,6 +103,7 @@ def processDataDir(directory,fig_peaks_dir="fig_peaks_main/",fig_freq_dir="fig_f
                             plt.title(fname)
                             print("Et maintenant ? (fermer le plot avant de répondre) (o/n)")
                             fig=plt.gcf()
+                            plt.pause(0.1)
                             plt.show()
                         fig.savefig(fname="../../"+fig_peaks_dir+fname+"_peaks"+".png",bbox_inches='tight',pad_inches=0)
                         plt.close()
