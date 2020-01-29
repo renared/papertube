@@ -120,8 +120,11 @@ def processDataDir(directory,freqdir="res/freq/",fig_peaks_dir="fig_peaks_main/"
                             plt.savefig(fname="../../"+fig_freq_dir+fname+"_freq"+".png",bbox_inches='tight',pad_inches=0)
                         plt.close()
                         np.savez("../../"+freqdir+fname+"_freq",freq_t=freq_t,freq=freq)
-                        cur.execute("INSERT INTO essai_res(idEssai,fichierFreq) VALUES(?,?)",(l[0][0],freqdir+fname+"_freq"+".npy"))
-                        conn.commit()
+                        if os.path.exists("../../"+freqdir+fname+"_freq"+".npz"):
+                            cur.execute("INSERT INTO essai_res(idEssai,fichierFreq) VALUES(?,?)",(l[0][0],freqdir+fname+"_freq"+".npy"))
+                            conn.commit()
+                        else:
+                            print("N'a pas correctement sauvegardé",fname+"_freq.npy")
 
 
 def readData(datafname):

@@ -9,14 +9,14 @@ inputdir='video/'
 outputdir='video_data/'
 
 
-def processDir(inputdir,outputdir,squaresize=0):
+def processDir(inputdir="video/",outputdir="video_data/",squaresize=0):
     q=0 # déjà existants
     r=0 # nouveaux
     inputdir="../../"+inputdir
     outputdir="../../"+outputdir
     for dirName, subdirList, fileList in os.walk(inputdir, topdown=False):
             for fname in fileList:
-                if fname.endswith(".mp4"):
+                if fname.endswith((".mp4",".m4v",".avi",".mkv",".mov",".flv",".3gp")):
                     print(fname,end=' ')
                     if os.path.isfile(outputdir+fname+"_data.npz") :
                         q+=1
@@ -47,7 +47,11 @@ def processDir(inputdir,outputdir,squaresize=0):
                                 break
 
                         t=np.linspace(0,(len(d2)+1)/fps,num=len(d2)+1)[1:]
-                        np.savez(outputdir+"/"+fname+"_data", t=t, d2=d2)
+                        try:
+                            os.makedirs(outputdir)
+                        except:
+                            pass
+                        np.savez(outputdir+fname+"_data", t=t, d2=d2)
                         r+=1
                         print("OK")
     print(q, "were already processed,",r,"new files.")

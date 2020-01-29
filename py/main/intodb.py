@@ -10,6 +10,7 @@ cur = conn.cursor()
 def intoDB(directory,copy=[]):
     '''exemple : copy=['nomFichier','nomPapier','nomSurface'] # nomFichier en premier !!
     '''
+    directory="../../"+directory
     if len(copy)>0:
         cur.execute("SELECT COUNT(*) FROM essai WHERE nomFichier=?",(copy[0],))
         if list(cur)[0][0] > 0 :
@@ -25,19 +26,19 @@ def intoDB(directory,copy=[]):
 
     m,n = 0,0
     entree = {}
-    for field in ["nomPapier","nomCondexp","nomSurface","diametre","longueur","largeur","dureeHold"]:
+    for field in ["nomPapier","nomCondexp","nomSurface","diametre","longueur","largeur","dureeHold","commentaire"]:
         print(field,":")
         entree[field]=copy[field] if field in copy else input()
     for dirName, subdirList, fileList in os.walk(directory, topdown=False):
         for fname in fileList:
-            if fname.endswith(".mp4") or fname.endswith(".m4v"):
+            if fname.endswith((".mp4",".m4v",".avi",".mkv",".mov",".flv",".3gp")):
                 cur.execute("SELECT COUNT(*) FROM essai WHERE nomFichier=?", (fname,))
                 if list(cur)[0][0] > 0 :
                     print(os.path.join(dirName, fname),"déjà dans la BD")
                     m+=1
                 else :
                     print("Importation de",os.path.join(dirName, fname))
-                    cur.execute("INSERT INTO essai(nomFichier,nomPapier,nomCondexp,nomSurface,diametre,longueur,largeur,dureeHold) VALUES(?,?,?,?,?,?,?,?)",(fname,entree['nomPapier'],entree['nomCondexp'],entree['nomSurface'],float(entree['diametre']),float(entree['longueur']),float(entree['largeur']),float(entree['dureeHold'])))
+                    cur.execute("INSERT INTO essai(nomFichier,nomPapier,nomCondexp,nomSurface,diametre,longueur,largeur,dureeHold,commentaire) VALUES(?,?,?,?,?,?,?,?,?)",(fname,entree['nomPapier'],entree['nomCondexp'],entree['nomSurface'],float(entree['diametre']),float(entree['longueur']),float(entree['largeur']),float(entree['dureeHold']),entree['commentaire']))
                     conn.commit()
                     n+=1
     print(m,"musiques étaient déjà importées dans la BD")
