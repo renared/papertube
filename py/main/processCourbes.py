@@ -80,11 +80,10 @@ def processDataDir_old(directory):
 #plt.show()
 
 def processDataDir(directory,freqdir="res/freq/",fig_peaks_dir="fig_peaks_main/",fig_freq_dir="fig_freq_main/"):
-    directory = "../../"+directory
-    for dirName, subdirList, fileList in os.walk(directory, topdown=False):
+    for dirName, subdirList, fileList in os.walk("../../"+directory, topdown=False):
             for fname in fileList:
                 if fname.endswith("_data.npz"):
-                    cur.execute("SELECT id FROM essai WHERE nomFichier=?",(fname.replace("_data.npz",""),))
+                    cur.execute("SELECT id FROM essai WHERE nomFichier=?",(directory+fname,))
                     l = list(cur)
                     if len(l)==0 :
                         print("Le fichier d'essai correspondant à",fname,"n'a pas préalablement été importé.")
@@ -109,11 +108,11 @@ def processDataDir(directory,freqdir="res/freq/",fig_peaks_dir="fig_peaks_main/"
                             plt.pause(1)
                         if fig_peaks_dir!=None : fig.savefig(fname="../../"+fig_peaks_dir+fname+"_peaks"+".png",bbox_inches='tight',pad_inches=0)
                         plt.close()
-                        freq_t,freq=running_freq(t,int(t[-1]-t[0]),peaks,8)
+                        freq_t,freq=running_freq(t,int(t[-1]-t[0]),peaks,10)
                         if fig_freq_dir!=None:
                             plt.figure(figsize=(16,8))
                             plt.plot(freq_t,freq)
-                            plt.ylim(0,5)
+                            plt.ylim(0,3)
                             plt.ylabel("Jerk frequency (Hz)")
                             plt.xlabel("Time (s)")
                             plt.title(fname)
