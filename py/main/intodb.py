@@ -10,7 +10,6 @@ cur = conn.cursor()
 def intoDB(directory,copy=[]):
     '''exemple : copy=['nomFichier','nomPapier','nomSurface'] # nomFichier en premier !!
     '''
-    directory="../../"+directory
     if len(copy)>0:
         cur.execute("SELECT COUNT(*) FROM essai WHERE nomFichier=?",(copy[0],))
         if list(cur)[0][0] > 0 :
@@ -29,10 +28,10 @@ def intoDB(directory,copy=[]):
     for field in ["nomPapier","nomCondexp","nomSurface","diametre","longueur","largeur","dureeHold","commentaire"]:
         print(field,":")
         entree[field]=copy[field] if field in copy else input()
-    for dirName, subdirList, fileList in os.walk(directory, topdown=False):
+    for dirName, subdirList, fileList in os.walk("../../"+directory, topdown=False):
         for fname in fileList:
-            if fname.endswith((".mp4",".m4v",".avi",".mkv",".mov",".flv",".3gp")):
-                cur.execute("SELECT COUNT(*) FROM essai WHERE nomFichier=?", (fname,))
+            if fname.endswith(".npz"):
+                cur.execute("SELECT COUNT(*) FROM essai WHERE nomFichier=?", (directory+fname,))
                 if list(cur)[0][0] > 0 :
                     print(os.path.join(dirName, fname),"déjà dans la BD")
                     m+=1
