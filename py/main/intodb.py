@@ -37,7 +37,7 @@ def intoDB(directory,copy=[]):
                     m+=1
                 else :
                     print("Importation de",os.path.join(dirName, fname))
-                    cur.execute("INSERT INTO essai(nomFichier,nomPapier,nomCondexp,nomSurface,diametre,longueur,largeur,dureeHold,commentaire) VALUES(?,?,?,?,?,?,?,?,?)",(fname,entree['nomPapier'],entree['nomCondexp'],entree['nomSurface'],float(entree['diametre']),float(entree['longueur']),float(entree['largeur']),float(entree['dureeHold']),entree['commentaire']))
+                    cur.execute("INSERT INTO essai(nomFichier,nomPapier,nomCondexp,nomSurface,diametre,longueur,largeur,dureeHold,commentaire) VALUES(?,?,?,?,?,?,?,?,?)",(directory+fname,entree['nomPapier'],entree['nomCondexp'],entree['nomSurface'],float(entree['diametre']),float(entree['longueur']),float(entree['largeur']),float(entree['dureeHold']),entree['commentaire']))
                     conn.commit()
                     n+=1
     print(m,"musiques étaient déjà importées dans la BD")
