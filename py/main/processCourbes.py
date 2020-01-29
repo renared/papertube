@@ -79,7 +79,7 @@ def processDataDir_old(directory):
                     plt.close()
 #plt.show()
 
-def processDataDir(directory,fig_peaks_dir="fig_peaks_main/",fig_freq_dir="fig_freq_main/"):
+def processDataDir(directory,freqdir="res/freq/",fig_peaks_dir="fig_peaks_main/",fig_freq_dir="fig_freq_main/"):
     directory = "../../"+directory
     for dirName, subdirList, fileList in os.walk(directory, topdown=False):
             for fname in fileList:
@@ -107,18 +107,20 @@ def processDataDir(directory,fig_peaks_dir="fig_peaks_main/",fig_freq_dir="fig_f
                             fig=plt.gcf()
                             plt.show()
                             plt.pause(1)
-                        fig.savefig(fname="../../"+fig_peaks_dir+fname+"_peaks"+".png",bbox_inches='tight',pad_inches=0)
+                        if fig_peaks_dir!=None : fig.savefig(fname="../../"+fig_peaks_dir+fname+"_peaks"+".png",bbox_inches='tight',pad_inches=0)
                         plt.close()
                         freq_t,freq=running_freq(t,int(t[-1]-t[0]),peaks,8)
-                        plt.figure(figsize=(16,8))
-                        plt.plot(freq_t,freq)
-                        plt.ylim(0,5)
-                        plt.ylabel("Jerk frequency (Hz)")
-                        plt.xlabel("Time (s)")
-                        plt.title(fname)
-                        plt.savefig(fname="../../"+fig_freq_dir+fname+"_freq"+".png",bbox_inches='tight',pad_inches=0)
+                        if fig_freq_dir!=None:
+                            plt.figure(figsize=(16,8))
+                            plt.plot(freq_t,freq)
+                            plt.ylim(0,5)
+                            plt.ylabel("Jerk frequency (Hz)")
+                            plt.xlabel("Time (s)")
+                            plt.title(fname)
+                            plt.savefig(fname="../../"+fig_freq_dir+fname+"_freq"+".png",bbox_inches='tight',pad_inches=0)
                         plt.close()
-                        cur.execute("INSERT INTO essai_res(idEssai,fichierFreq) VALUES(?,?)",(l[0][0],fig_freq_dir+fname+"_freq"+".png"))
+                        np.savez("../../"+freqdir+fname+"_freq",freq_t=freq_t,freq=freq)
+                        cur.execute("INSERT INTO essai_res(idEssai,fichierFreq) VALUES(?,?)",(l[0][0],freqdir+fname+"_freq"+".npy"))
                         conn.commit()
 
 
