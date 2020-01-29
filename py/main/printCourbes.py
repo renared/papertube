@@ -15,7 +15,7 @@ directory='../../'
 DBfile = "../../papertube.db"
 conn = sqlite3.connect(DBfile)
 cur = conn.cursor()
-
+cur2 = conn.cursor()
 
 
 # This import registers the 3D projection, but is otherwise unused.
@@ -33,14 +33,23 @@ np.random.seed(19680801)
 
 # on veut récupérer les données en fonction des paramètres : L,l,ratio (à créer nous meme), Rayon, Thold, surface, type de papier
 #et le tracer la fréquence en fonction de ces paramètres et du temps
-t = ('A4',)
-c.execute('SELECT * FROM essai WHERE nomPapier=?', t)
-print c.fetchone()
+# t = ('A4',)
+# cur.execute('SELECT * FROM essai WHERE nomPapier=?', t)
+# print cur.fetchone()
 
-
-
-
-cur.execute('SELECT essai_res.fichierFreq FROM essai JOIN essai_res ON essai.id = essai_res.idEssai WHERE essai.id = ?', t)
+conditionCourbe = ['nomPapier', 'nomCondexp', 'nomSurface', 'diametre', 'longueur', 'largeur', 'dureeHold']
+cur.execute('SELECT nomFichier FROM essai  WHERE nomCondexp = \'normal\' GROUP BY '+ conditionCourbe[3] ) # ATTENTION, ici on fait le gros raccourci : pour chaque condition, il n'y a qu'une vidéo, ou du moins on n'en prend qu'une en jeu, c'est pour aller plus vite sur le code pour le moment mais il faudra revenir dessus!
+tab = []
+for row in cur :
+    # cur2.execute('SELECT essai_res.fichierFreq FROM essai JOIN essai_res ON essai.id = essai_res.idEssai WHERE essai.id = ?', row) # c'était quand le nomFicher était celui de la vidéo
+    print(row)
+    # print((cur2.fetchall())[0][0])
+    file = row[0]
+    print(file)
+    npzf = np.load(os.path.join(directory,file))
+    t = npzf['t']
+    v = npzf['d2']
+    tab.append([t,v])
 
 # Larger example that inserts many records at a time
 # purchases = [('2006-03-28', 'BUY', 'IBM', 1000, 45.00),
@@ -69,20 +78,39 @@ cur.execute('SELECT essai_res.fichierFreq FROM essai JOIN essai_res ON essai.id 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 
-colors = ['r', 'g', 'b', 'y']
-yticks = [3, 2, 1, 0]
-for c, k in zip(colors, yticks):
+
+
+for k in range(len(tab)):
     # Generate the random data for the y=k 'layer'.
-    xs = np.arange(20)
-    ys = np.random.rand(20)
+    e = tab[k]
+    xts = e[0]
+    
+    ys = e[1]
 
     # You can provide either a single color or an array with the same length as
     # xs and ys. To demonstrate this, we color the first bar of each set cyan.
-    cs = [c] * len(xs)
-    cs[0] = 'c'
+    cs = ['r'] * len(xts)
+    #cs[0] = 'c'
 
     # Plot the bar graph given by xs and ys on the plane y=k with 80% opacity.
-    ax.bar(xs, ys, zs=k, zdir='y', color=cs, alpha=0.8)
+    ax.bar(xts, ys, zs=k, zdir='y', color=cs, alpha=0.8)
+
+
+# colors = ['r', 'g', 'b', 'y']
+# yticks = [3, 2, 1, 0]
+# for c, k in zip(colors, yticks):
+#     # Generate the random data for the y=k 'layer'.
+#     xs = np.arange(20)
+#     
+#     ys = np.random.rand(20)
+# 
+#     # You can provide either a single color or an array with the same length as
+#     # xs and ys. To demonstrate this, we color the first bar of each set cyan.
+#     cs = [c] * len(xs)
+#     cs[0] = 'c'
+# 
+#     # Plot the bar graph given by xs and ys on the plane y=k with 80% opacity.
+#     ax.bar(xs, ys, zs=k, zdir='y', color=cs, alpha=0.8)
 
 ax.set_xlabel('X')
 ax.set_ylabel('Y')
