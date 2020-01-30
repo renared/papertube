@@ -118,14 +118,30 @@ def processDataDir(directory,freqdir="res/freq/",fig_peaks_dir="fig_peaks_main/"
                             plt.title(fname)
                             plt.savefig(fname="../../"+fig_freq_dir+fname+"_freq"+".png",bbox_inches='tight',pad_inches=0)
                         plt.close()
+                        try:
+                            os.makedirs("../../"+freqdir)
+                        except:
+                            pass
                         np.savez("../../"+freqdir+fname+"_freq",freq_t=freq_t,freq=freq)
                         if os.path.exists("../../"+freqdir+fname+"_freq"+".npz"):
-                            cur.execute("INSERT INTO essai_res(idEssai,fichierFreq) VALUES(?,?)",(l[0][0],freqdir+fname+"_freq"+".npy"))
+                            cur.execute("INSERT INTO essai_res(idEssai,fichierFreq) VALUES(?,?)",(l[0][0],freqdir+fname+"_freq"+".npz"))
                             conn.commit()
                         else:
-                            print("N'a pas correctement sauvegardé",fname+"_freq.npy")
+                            print("N'a pas correctement sauvegardé",fname+"_freq.npz")
 
 
-def readData(datafname):
+def readData(datafname,t="t",sig="d2"):
     npzf = np.load(datafname)
-    return npzf['t'], npzf['d2']
+    return npzf[t], npzf[sig]
+
+def plotFreq(dir):
+    for dirName, subdirList, fileList in os.walk("../../"+dir, topdown=False):
+            for fname in fileList:
+                if fname.endswith("_freq.npz"):
+                    t,f = readData("../../"+dir+fname,t="freq_t",sig="freq")
+                    for i in range(len(f)):
+                            if f[i]==0.:
+                                t = t[:i+1]
+                                f = f[:i+1]
+                                break
+                    plt.plot(t,f)
