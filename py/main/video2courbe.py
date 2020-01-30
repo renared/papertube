@@ -55,3 +55,8 @@ def processDir(inputdir="video/",outputdir="video_data/",squaresize=0):
                         r+=1
                         print("OK")
     print(q, "were already processed,",r,"new files.")
+
+def processDirPlus(*subfolders_of_video_data):
+    for sub in subfolders_of_video_data:
+        s = "" if sub.endswith("/") else "/"
+        processDir("video/"+sub+s,"video_data/"+sub+s)

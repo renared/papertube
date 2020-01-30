@@ -5,3 +5,10 @@
 0129d pareil 2mm 10s
 0129e pareil 2mm 20s !!
 0129f pareil 5mm 20s
+
+0130a var largeur 21x5
+0130b var largeur 21x3
+0130c var largeur 21x2
+0130d var longueur 14.7x3
+0130e var longueur 21x3
+0130f var longueur 29.7x3

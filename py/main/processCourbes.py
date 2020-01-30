@@ -145,3 +145,8 @@ def plotFreq(dir):
                                 f = f[:i+1]
                                 break
                     plt.plot(t,f)
+
+def processDataDirPlus(*subfolders_of_video_data):
+    for sub in subfolders_of_video_data:
+        s = "" if sub.endswith("/") else "/"
+        processDataDir("video_data/"+sub+s,"res/freq/"+sub+s)
