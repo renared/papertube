@@ -12,3 +12,6 @@
 0130d var longueur 14.7x3
 0130e var longueur 21x3
 0130f var longueur 29.7x3
+
+0131a var hold 10s
+0131b var hold 20s
