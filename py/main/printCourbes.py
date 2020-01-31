@@ -8,6 +8,8 @@ import sqlite3
 import tkinter as tk
 from tkinter.messagebox import *
 from tkinter.simpledialog import *
+from processCourbes import *
+
 
 root_window = tk.Tk()
 root_window.withdraw()
@@ -36,20 +38,36 @@ np.random.seed(19680801)
 # t = ('A4',)
 # cur.execute('SELECT * FROM essai WHERE nomPapier=?', t)
 # print cur.fetchone()
-
 conditionCourbe = ['nomPapier', 'nomCondexp', 'nomSurface', 'diametre', 'longueur', 'largeur', 'dureeHold']
-cur.execute('SELECT nomFichier FROM essai  WHERE nomCondexp = \'normal\' GROUP BY '+ conditionCourbe[3] ) # ATTENTION, ici on fait le gros raccourci : pour chaque condition, il n'y a qu'une vidéo, ou du moins on n'en prend qu'une en jeu, c'est pour aller plus vite sur le code pour le moment mais il faudra revenir dessus!
-tab = []
-for row in cur :
-    # cur2.execute('SELECT essai_res.fichierFreq FROM essai JOIN essai_res ON essai.id = essai_res.idEssai WHERE essai.id = ?', row) # c'était quand le nomFicher était celui de la vidéo
-    print(row)
-    # print((cur2.fetchall())[0][0])
-    file = row[0]
-    print(file)
-    npzf = np.load(os.path.join(directory,file))
-    t = npzf['t']
-    v = npzf['d2']
-    tab.append([t,v])
+
+def selectData(k):
+    Lparam = []
+    #On commence par récupérer les différentes valeurs de paramètre
+    cur.execute("SELECT "+ conditionCourbe[k] +" FROM essai GROUP BY "+ conditionCourbe[k])
+    for row in cur:
+        Lparam.append(row[0])
+    
+    
+    
+    FileTab = []
+    for param in Lparam:
+        # print("SELECT nomFichier FROM essai  WHERE "+conditionCourbe[k]+" = '"+ str(param)+"'" )
+        cur.execute("SELECT nomFichier FROM essai  WHERE "+conditionCourbe[k]+" = '"+ str(param)+"'" )
+        subFileTab =[] #On range les mêmes fichier dans un sous tableau
+        for row in cur :
+            # print(row[0])
+            cur2.execute('SELECT essai_res.fichierFreq FROM essai JOIN essai_res ON essai.id = essai_res.idEssai WHERE essai.nomFichier = ?', (row[0],))
+            
+            # print((cur2.fetchall())[0][0])
+            file = cur2.fetchall()[0][0]
+            # param = row[1]
+            #print(file)
+            # npzf = np.load(os.path.join(directory,file))
+            # print(npzf)
+            t,v = readData(os.path.join(directory,file), 'freq_t','freq')
+            subFileTab.append([t,v])
+        FileTab.append(subFileTab)
+    return FileTab, Lparam
 
 # Larger example that inserts many records at a time
 # purchases = [('2006-03-28', 'BUY', 'IBM', 1000, 45.00),
@@ -75,48 +93,75 @@ for row in cur :
 
 
 ## On affiche
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
 
-
-
-for k in range(len(tab)):
-    # Generate the random data for the y=k 'layer'.
-    e = tab[k]
-    xts = e[0]
+def printCourbes3D(ax, k=4):
+    # fig = plt.figure()
+    # ax = fig.add_subplot(111, projection='3d')
+    # 
+    tab, Lparam = selectData(k)
     
-    ys = e[1]
+    TIME=[]
+    FREQ=[]
+    PARAM=[Laparam for i in range(len(TIME))]
+    yticks = [i for i in range(len(tab))]
+    
+    for i in range(len(tab)):
+        for j in range(len(tab[i])):
+            
+            e = tab[i][j] # On récupère les coordonnées
+            xts = e[0]
+            ys = e[1]
+            FREQ.append(ys)
+            TIME.append(xts)
+            # You can provide either a single color or an array with the same length as
+            # xs and ys. To demonstrate this, we color the first bar of each set cyan.
+            cs = ['b'] * len(xts)
+            #cs[0] = 'c'
+            param = Lparam[i]
+            # Plot the bar graph given by xs and ys on the plane y=k with 80% opacity.
+            ax.plot3D(xts, ys, zs=i, zdir='y', alpha=0.8)
+        # ax.bar(xts, ys, zs=param, zdir='y', color=cs, alpha=0.8)
+    
+    # TIME, PARAM = np.meshgrid(TIME, PARAM)
+    # ax.plot_wireframe(TIME, PARAM, FREQ, rstride=10, cstride=10)
+    # 
+    # plt.show()
+    
+    # colors = ['r', 'g', 'b', 'y']
+    # yticks = [3, 2, 1, 0]
+    # for c, k in zip(colors, yticks):
+    #     # Generate the random data for the y=k 'layer'.
+    #     xs = np.arange(20)
+    #     
+    #     ys = np.random.rand(20)
+    # 
+    #     # You can provide either a single color or an array with the same length as
+    #     # xs and ys. To demonstrate this, we color the first bar of each set cyan.
+    #     cs = [c] * len(xs)
+    #     cs[0] = 'c'
+    # 
+    #     # Plot the bar graph given by xs and ys on the plane y=k with 80% opacity.
+    #     ax.bar(xs, ys, zs=k, zdir='y', color=cs, alpha=0.8)
+    
+    
+    
+    # 
+    # 
+    ax.set_xlabel('Time')
+    ax.set_ylabel(conditionCourbe[k])
+    ax.set_zlabel('Frequency')
+    
+    # On the y axis let's only label the discrete values that we have data for.
+    ax.set_yticks(yticks)
+    ax.set_yticklabels(Lparam)
+    
+    # plt.show()
+    
 
-    # You can provide either a single color or an array with the same length as
-    # xs and ys. To demonstrate this, we color the first bar of each set cyan.
-    cs = ['r'] * len(xts)
-    #cs[0] = 'c'
-
-    # Plot the bar graph given by xs and ys on the plane y=k with 80% opacity.
-    ax.bar(xts, ys, zs=k, zdir='y', color=cs, alpha=0.8)
-
-
-# colors = ['r', 'g', 'b', 'y']
-# yticks = [3, 2, 1, 0]
-# for c, k in zip(colors, yticks):
-#     # Generate the random data for the y=k 'layer'.
-#     xs = np.arange(20)
-#     
-#     ys = np.random.rand(20)
-# 
-#     # You can provide either a single color or an array with the same length as
-#     # xs and ys. To demonstrate this, we color the first bar of each set cyan.
-#     cs = [c] * len(xs)
-#     cs[0] = 'c'
-# 
-#     # Plot the bar graph given by xs and ys on the plane y=k with 80% opacity.
-#     ax.bar(xs, ys, zs=k, zdir='y', color=cs, alpha=0.8)
-
-ax.set_xlabel('X')
-ax.set_ylabel('Y')
-ax.set_zlabel('Z')
-
-# On the y axis let's only label the discrete values that we have data for.
-ax.set_yticks(yticks)
-
+fig = plt.figure()
+for k in range(len(conditionCourbe)):
+    
+    
+    ax = fig.add_subplot(2,len(conditionCourbe)/2+1,k+1, projection='3d')
+    printCourbes3D(ax, k)
 plt.show()
