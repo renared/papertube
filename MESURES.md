@@ -48,7 +48,7 @@ statut : **+/- fait** 0129e 0129f
 
 ### dureeHold
 
-statut : **rien**
+statut : **fait**
 
 * papier : A4
 * condexp : normal
@@ -56,7 +56,7 @@ statut : **rien**
 * diametre : 2 mm
 * longueur : 21 cm
 * largeur : 2 cm
-* **dureeHold** : 10, 20, 30 s
+* **dureeHold** : 10, 20, 30 s *>0131a, 0131b, 0131c*
 
 ## Surface
 
