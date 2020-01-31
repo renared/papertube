@@ -133,20 +133,64 @@ def processDataDir(directory,freqdir="res/freq/",fig_peaks_dir="fig_peaks_main/"
 def readData(datafname,t="t",sig="d2"):
     npzf = np.load(datafname)
     return npzf[t], npzf[sig]
+def readFreq(path):
+    t,f = readData("../../"+path,t="freq_t",sig="freq")
+    for i in range(len(f)):
+            if f[i]==0.:
+                t = t[:i+1]
+                f = f[:i+1]
+                break
+    return t,f
 
-def plotFreq(dir):
+
+def plotFreq(dir,plotAll=True,plotAvg=True):
+    tf = []
     for dirName, subdirList, fileList in os.walk("../../"+dir, topdown=False):
             for fname in fileList:
                 if fname.endswith("_freq.npz"):
-                    t,f = readData("../../"+dir+fname,t="freq_t",sig="freq")
+                    t,f = readFreq(dir+fname)
+                    if plotAvg:tf.append((t,f))
+                    if plotAll:plt.plot(t,f)
+    if plotAvg:
+        t2,f2 = averageData(tf)
+        plt.plot(t2,f2)
+
+def avgFreq(dir):
+    tf = []
+    for dirName, subdirList, fileList in os.walk("../../"+dir, topdown=False):
+            for fname in fileList:
+                if fname.endswith("_freq.npz"):
+                    t,f = readFreq(dir+fname)
                     for i in range(len(f)):
                             if f[i]==0.:
                                 t = t[:i+1]
                                 f = f[:i+1]
                                 break
-                    plt.plot(t,f)
+                    tf.append((t,f))
+    t2,f2 = averageData(tf)
+    return t2,f2
 
 def processDataDirPlus(*subfolders_of_video_data):
     for sub in subfolders_of_video_data:
         s = "" if sub.endswith("/") else "/"
         processDataDir("video_data/"+sub+s,"res/freq/"+sub+s)
+
+def averageData(l):
+    '''
+     args : tuples (t,sig)
+     10 Hz
+    '''
+    m=float("+inf")
+    M=float("-inf")
+    Hz=0
+    for t,f in l:
+        if (t[0]<m) : m=t[0]
+        if (t[-1]>M) : M=t[-1]
+        c = len(t)/(t[-1]-t[0])
+        if c>Hz:Hz=c
+    t2 = np.linspace(m,M,num=int(Hz*(M-m)))
+    moy=[0 for x in t2]
+    for t,f in l:
+        for i in range(len(t2)):
+            moy[i]+=np.interp(t2[i],t,f,right=0.0)
+    return t2, np.array(moy)/len(l)
