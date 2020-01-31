@@ -50,11 +50,11 @@ statut : **+/- fait** 0129e 0129f
 
 statut : **rien**
 
-* papier : clairefontaine
+* papier : A4
 * condexp : normal
 * surface : nesquik
 * diametre : 2 mm
-* longueur : 20 cm
+* longueur : 21 cm
 * largeur : 2 cm
 * **dureeHold** : 10, 20, 30 s
 
