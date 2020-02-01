@@ -4,7 +4,7 @@
 
 ## ;)
 
-![avgFreqDB.png](avgFreqDB)
+![avgFreqDB](avgFreqDB.png)
 
 ## Keskifofer
 
