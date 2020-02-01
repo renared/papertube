@@ -189,7 +189,7 @@ def averageData(l):
         for i in range(len(t2)):
             moy[i]+=np.interp(t2[i],t,f,right=0.0)
     return t2, np.array(moy)/len(l)
-    
+
 def avgFreqDB(**kwargs):
     ## exemple : avgFreqDB(nomPapier="A4",diametre=0.002)
     nomFichier = kwargs.get('nomFichier',None)
@@ -201,18 +201,18 @@ def avgFreqDB(**kwargs):
     largeur = kwargs.get("largeur",None)
     dureeHold = kwargs.get("dureeHold",None)
     commentaire = kwargs.get("commentaire",None)
-    
+
     where=""
-    if nomFichier!=None:where+=",essai.nomFichier='"+nomFichier+"'"
-    if nomPapier!=None:where+=",essai.nomPapier='"+nomPapier+"'"
-    if nomCondexp!=None:where+=",essai.nomCondexp='"+nomCondexp+"'"
-    if nomSurface!=None:where+=",essai.nomFichier='"+nomSurface+"'"
-    if diametre!=None:where+=",essai.diametre="+str(diametre)
-    if longueur!=None:where+=",essai.longueur="+str(longueur)
-    if largeur!=None:where+=",essai.largeur="+str(largeur)
-    if dureeHold!=None:where+=",essai.dureeHold="+str(dureeHold)
-    if commentaire!=None:where+=",essai.commentaire='"+commentaire+"'"
-    where=where[1:]
+    if nomFichier!=None:where+=" AND essai.nomFichier='"+nomFichier+"'"
+    if nomPapier!=None:where+=" AND essai.nomPapier='"+nomPapier+"'"
+    if nomCondexp!=None:where+=" AND essai.nomCondexp='"+nomCondexp+"'"
+    if nomSurface!=None:where+=" AND essai.nomFichier='"+nomSurface+"'"
+    if diametre!=None:where+=" AND essai.diametre="+str(diametre)
+    if longueur!=None:where+=" AND essai.longueur="+str(longueur)
+    if largeur!=None:where+=" AND essai.largeur="+str(largeur)
+    if dureeHold!=None:where+=" AND essai.dureeHold="+str(dureeHold)
+    if commentaire!=None:where+=" AND essai.commentaire='"+commentaire+"'"
+    where=where[5:]
     print("Requête : SELECT essai_res.fichierFreq FROM essai_res JOIN essai ON essai.id=essai_res.idEssai WHERE "+where)
     cur.execute("SELECT essai_res.fichierFreq FROM essai_res JOIN essai ON essai.id=essai_res.idEssai WHERE "+where)
     tab=list(cur)
@@ -221,4 +221,3 @@ def avgFreqDB(**kwargs):
         t,f = readFreq(line[0])
         tf.append((t,f))
     return averageData(tf)
-    
