@@ -213,6 +213,7 @@ def avgFreqDB(**kwargs):
     if dureeHold!=None:where+=",essai.dureeHold="+str(dureeHold)
     if commentaire!=None:where+=",essai.commentaire='"+commentaire+"'"
     where=where[1:]
+    print("Requête : SELECT essai_res.fichierFreq FROM essai_res JOIN essai ON essai.id=essai_res.idEssai WHERE "+where)
     cur.execute("SELECT essai_res.fichierFreq FROM essai_res JOIN essai ON essai.id=essai_res.idEssai WHERE "+where)
     tab=list(cur)
     tf=[]
