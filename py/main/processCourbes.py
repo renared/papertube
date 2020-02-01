@@ -161,11 +161,6 @@ def avgFreq(dir):
             for fname in fileList:
                 if fname.endswith("_freq.npz"):
                     t,f = readFreq(dir+fname)
-                    for i in range(len(f)):
-                            if f[i]==0.:
-                                t = t[:i+1]
-                                f = f[:i+1]
-                                break
                     tf.append((t,f))
     t2,f2 = averageData(tf)
     return t2,f2
@@ -194,3 +189,35 @@ def averageData(l):
         for i in range(len(t2)):
             moy[i]+=np.interp(t2[i],t,f,right=0.0)
     return t2, np.array(moy)/len(l)
+    
+def avgFreqDB(**kwargs):
+    ## exemple : avgFreqDB(nomPapier="A4",diametre=0.002)
+    nomFichier = kwargs.get('nomFichier',None)
+    nomPapier = kwargs.get("nomPapier",None)
+    nomCondexp = kwargs.get("nomCondexp",None)
+    nomSurface = kwargs.get("nomSurface",None)
+    diametre = kwargs.get("diametre",None)
+    longueur = kwargs.get("longueur",None)
+    largeur = kwargs.get("largeur",None)
+    dureeHold = kwargs.get("dureeHold",None)
+    commentaire = kwargs.get("commentaire",None)
+    
+    where=""
+    if nomFichier!=None:where+=",essai.nomFichier='"+nomFichier+"'"
+    if nomPapier!=None:where+=",essai.nomPapier='"+nomPapier+"'"
+    if nomCondexp!=None:where+=",essai.nomCondexp='"+nomCondexp+"'"
+    if nomSurface!=None:where+=",essai.nomFichier='"+nomSurface+"'"
+    if diametre!=None:where+=",essai.diametre="+str(diametre)
+    if longueur!=None:where+=",essai.longueur="+str(longueur)
+    if largeur!=None:where+=",essai.largeur="+str(largeur)
+    if dureeHold!=None:where+=",essai.dureeHold="+str(dureeHold)
+    if commentaire!=None:where+=",essai.commentaire='"+commentaire+"'"
+    where=where[1:]
+    cur.execute("SELECT essai_res.fichierFreq FROM essai_res JOIN essai ON essai.id=essai_res.idEssai WHERE "+where)
+    tab=list(cur)
+    tf=[]
+    for line in tab :
+        t,f = readFreq(line[0])
+        tf.append((t,f))
+    return averageData(tf)
+    
