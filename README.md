@@ -2,6 +2,10 @@
 
 **Bien tout lire (rapidement en diagonale) avant de commencer à filmer et tout**
 
+## ;)
+
+![avgFreqDB.png](avgFreqDB)
+
 ## Keskifofer
 
 ### Stream caméra vers pc
