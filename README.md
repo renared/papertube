@@ -10,7 +10,7 @@
 
 ![régression puissance -1](regInv-dureeHold.png)
 
-'''
+```
 ## Requête : SELECT essai_res.fichierFreq FROM essai_res JOIN essai ON essai.id=essai_res.idEssai WHERE essai.dureeHold=10 AND essai.commentaire='var dureeHold'
 f(t) = 205.59395303722056 * ( t - -9.999999999999998 ) ^ -1.9948046630990899
 ## Requête : SELECT essai_res.fichierFreq FROM essai_res JOIN essai ON essai.id=essai_res.idEssai WHERE essai.dureeHold=20 AND essai.commentaire='var dureeHold'
@@ -35,7 +35,7 @@ f(t) = 208.96137136483904 * ( t - -9.99999999999988 ) ^ -2
 f(t) = 199.4733327953145 * ( t - -9.999999999999998 ) ^ -2
 ## Requête : SELECT essai_res.fichierFreq FROM essai_res JOIN essai ON essai.id=essai_res.idEssai WHERE essai.dureeHold=30 AND essai.commentaire='var dureeHold'
 f(t) = 241.37173073076082 * ( t - -9.999999999999998 ) ^ -2
-'''
+```
 
 ## Keskifofer
 
