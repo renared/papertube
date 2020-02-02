@@ -214,7 +214,7 @@ def avgFreqDB(**kwargs):
     if dureeHold!=None:where+=" AND essai.dureeHold="+str(dureeHold)
     if commentaire!=None:where+=" AND essai.commentaire='"+commentaire+"'"
     where=where[5:]
-    print("Requête : SELECT essai_res.fichierFreq FROM essai_res JOIN essai ON essai.id=essai_res.idEssai WHERE "+where)
+    print("## Requête : SELECT essai_res.fichierFreq FROM essai_res JOIN essai ON essai.id=essai_res.idEssai WHERE "+where)
     cur.execute("SELECT essai_res.fichierFreq FROM essai_res JOIN essai ON essai.id=essai_res.idEssai WHERE "+where)
     tab=list(cur)
     tf=[]
@@ -223,11 +223,17 @@ def avgFreqDB(**kwargs):
         tf.append((t,f))
     return averageData(tf)
 
-def regression(t,f,fonction="exp"):
-    if fonction=="exp":
-        phi = lambda x,x0,a,b:a*np.exp((x-x0)*b)
-        popt,pcov=curve_fit(phi, t, f,bounds=((-100,0,float("-inf")),(100,float("+inf"),0)) , p0=(0,1,-1))
-    elif fonction=="pow":
-        phi = lambda x,x0,a,b:a*(x-x0)**b
-        popt,pcov=curve_fit(phi, t, f,bounds=((-100,float("-inf"),float("-inf")),(100,float("+inf"),float("+inf"))) , p0=(0,1,-1))
-    return t,np.array([phi(x,popt[0],popt[1],popt[2]) for x in t]),popt
+def regressionExp(t,f):
+    phi = lambda x,x0,a,b:a*np.exp((x-x0)*b)
+    popt,pcov=curve_fit(phi, t, f,bounds=((-200,0,float("-inf")),(200,float("+inf"),0)) , p0=(0,1,-1))
+    return t,np.array([phi(x,*popt) for x in t]),popt
+
+def regressionPow(t,f):
+    phi = lambda x,x0,a,b:a*(x-x0)**b
+    popt,pcov=curve_fit(phi, t, f,bounds=((-10,-10000,-4),(5,10000,4)) , p0=(0,1,-1))
+    return t,np.array([phi(x,*popt) for x in t]),popt
+
+def regressionPowF(t,f,power=-1):
+    phi = lambda x,x0,a : a*(x-x0)**power
+    popt,pcov=curve_fit(phi, t, f,bounds=((-10,-10000),(5,10000)) , p0=(0,1))
+    return t,np.array([phi(x,*popt) for x in t]),popt
