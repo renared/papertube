@@ -1,0 +1,20 @@
+t,f=avgFreqDB(largeur=0.02,commentaire="var largeur")
+t2,f2,popt=regression(t,f,fonction="pow")
+print("f(t) =",popt[1],"* ( x -",popt[0],") ^",popt[2])
+plt.plot(t,f,label="10 s",linestyle="dotted")
+plt.plot(t2,f2, label="10 s")
+
+t,f=avgFreqDB(largeur=0.03,commentaire="var largeur")
+t2,f2,popt=regression(t,f,fonction="pow")
+print("f(t) =",popt[1],"* ( x -",popt[0],") ^",popt[2])
+plt.plot(t,f,label="20 s",linestyle="dotted")
+plt.plot(t2,f2, label="20 s")
+
+t,f=avgFreqDB(largeur=0.05,commentaire="var largeur")
+t2,f2,popt=regression(t,f,fonction="pow")
+print("f(t) =",popt[1],"* ( x -",popt[0],") ^",popt[2])
+plt.plot(t,f,label="30 s",linestyle="dotted")
+plt.plot(t2,f2, label="30 s")
+
+plt.legend()
+plt.show()

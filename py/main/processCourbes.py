@@ -8,6 +8,7 @@ import sqlite3
 import tkinter as tk
 from tkinter.messagebox import *
 from tkinter.simpledialog import *
+from scipy.optimize import curve_fit
 
 root_window = tk.Tk()
 root_window.withdraw()
@@ -221,3 +222,12 @@ def avgFreqDB(**kwargs):
         t,f = readFreq(line[0])
         tf.append((t,f))
     return averageData(tf)
+
+def regression(t,f,fonction="exp"):
+    if fonction=="exp":
+        phi = lambda x,x0,a,b:a*np.exp((x-x0)*b)
+        popt,pcov=curve_fit(phi, t, f,bounds=((-100,0,float("-inf")),(100,float("+inf"),0)) , p0=(0,1,-1))
+    elif fonction=="pow":
+        phi = lambda x,x0,a,b:a*(x-x0)**b
+        popt,pcov=curve_fit(phi, t, f,bounds=((-100,float("-inf"),float("-inf")),(100,float("+inf"),float("+inf"))) , p0=(0,1,-1))
+    return t,np.array([phi(x,popt[0],popt[1],popt[2]) for x in t]),popt
