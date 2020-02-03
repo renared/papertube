@@ -259,7 +259,7 @@ def regressionT(t,f):
 
 
 
-def regressionT1(t,f):
+def regressionT1(t,f,plot=True):
     ## régression PERIODE seulement première phase
     r_squared_min=0.9
     T = 1/f[:-1]
@@ -269,7 +269,8 @@ def regressionT1(t,f):
     while (j>0 and r_value**2<r_squared_min):
         a1,b1,r_value,p_value,std_err = linregress(t[:j],T[:j])
         j-=1
-    plt.plot(t[:j],phi(t[:j],a1,b1))
+    if plot : plt.plot(t[:j],phi(t[:j],a1,b1))
+    return t[:j],phi(t[:j],a1,b1),a1,b1,r_value**2
 
 
 
