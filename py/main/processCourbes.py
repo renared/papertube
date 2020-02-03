@@ -242,14 +242,16 @@ def regressionPowF(t,f,power=-1):
     return t,f2,*popt,r_squared
 
 def regressionT(t,f):
-    def phi(x,a1,b1,a2,x_c):
-        return ( a1*x+b1 ) * (x<=x_c) + ( a2*x+(a1-a2)*x_c+b1 ) * (x>x_c)
+    def phi(x,a1,b1,a2,b2,x1,x2):
+        return ( a1*x+b1 ) * (x<=x1) + ( (a2*x2+b2-a1*x1-b1)*(x-x1)/(x2-x1) + a1*x1+b1 ) * (x1<x)*(x<x2) + ( a2*x+b2 ) * (x>=x2)
         T=1/f
-    popt, pcov = curve_fit( phi, t, T, p0=(1,0,1,t[len(t)//2]) )
+    popt, pcov = curve_fit( phi, t, T, p0=(1,0,1,0,t[len(t)//2],t[-1]) )
     T2 = np.array([phi(x,*popt) for x in t])
     i_c = np.searchsorted(t,x_c)
     r1_squared = 1 - np.sum((T[:i_c]-T2[:i_c])**2)/np.sum((T[:i_c]-np.average(T[:i_c]))**2)
+    r2_squared = 1 - np.sum((T[i_c:]-T2[i_c:])**2)/np.sum((T[i_c:]-np.average(T[i_c:]))**2)
     print("i_c=",i_c,"; r²=",r1_squared)
+    print("i_c=",i_c,"; r²=",r2_squared)
 
     return t,T2,*popt
 
