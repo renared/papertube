@@ -2,6 +2,41 @@
 
 **Bien tout lire (rapidement en diagonale) avant de commencer à filmer et tout**
 
+## ;)
+
+![avgFreqDB](avgFreqDB.png)
+
+## encore mieux
+
+![régression puissance -1](regInv-dureeHold.png)
+
+```
+## Requête : SELECT essai_res.fichierFreq FROM essai_res JOIN essai ON essai.id=essai_res.idEssai WHERE essai.dureeHold=10 AND essai.commentaire='var dureeHold'
+f(t) = 205.59395303722056 * ( t - -9.999999999999998 ) ^ -1.9948046630990899
+## Requête : SELECT essai_res.fichierFreq FROM essai_res JOIN essai ON essai.id=essai_res.idEssai WHERE essai.dureeHold=20 AND essai.commentaire='var dureeHold'
+f(t) = 8.868841529746348 * ( t - -2.4704196493778166 ) ^ -1.1686063122505885
+## Requête : SELECT essai_res.fichierFreq FROM essai_res JOIN essai ON essai.id=essai_res.idEssai WHERE essai.dureeHold=30 AND essai.commentaire='var dureeHold'
+f(t) = 57.31657958578606 * ( t - -9.757247726630192 ) ^ -1.5497302376553097
+## Requête : SELECT essai_res.fichierFreq FROM essai_res JOIN essai ON essai.id=essai_res.idEssai WHERE essai.dureeHold=10 AND essai.commentaire='var dureeHold'
+f(t) = 4.042290968674672 * ( t - 1.7897873373044655 ) ^ -1
+## Requête : SELECT essai_res.fichierFreq FROM essai_res JOIN essai ON essai.id=essai_res.idEssai WHERE essai.dureeHold=20 AND essai.commentaire='var dureeHold'
+f(t) = 4.521889441139854 * ( t - 0.15469416702223085 ) ^ -1
+## Requête : SELECT essai_res.fichierFreq FROM essai_res JOIN essai ON essai.id=essai_res.idEssai WHERE essai.dureeHold=30 AND essai.commentaire='var dureeHold'
+f(t) = 5.7058103099254875 * ( t - -0.3296897430589148 ) ^ -1
+## Requête : SELECT essai_res.fichierFreq FROM essai_res JOIN essai ON essai.id=essai_res.idEssai WHERE essai.dureeHold=10 AND essai.commentaire='var dureeHold'
+f(t) = 26.907751456855838 * ( t - -3.9975011877780298 ) ^ -1.5
+## Requête : SELECT essai_res.fichierFreq FROM essai_res JOIN essai ON essai.id=essai_res.idEssai WHERE essai.dureeHold=20 AND essai.commentaire='var dureeHold'
+f(t) = 36.20676056227471 * ( t - -8.167936841364964 ) ^ -1.5
+## Requête : SELECT essai_res.fichierFreq FROM essai_res JOIN essai ON essai.id=essai_res.idEssai WHERE essai.dureeHold=30 AND essai.commentaire='var dureeHold'
+f(t) = 46.02118801703095 * ( t - -8.845055089020091 ) ^ -1.5
+## Requête : SELECT essai_res.fichierFreq FROM essai_res JOIN essai ON essai.id=essai_res.idEssai WHERE essai.dureeHold=10 AND essai.commentaire='var dureeHold'
+f(t) = 208.96137136483904 * ( t - -9.99999999999988 ) ^ -2
+## Requête : SELECT essai_res.fichierFreq FROM essai_res JOIN essai ON essai.id=essai_res.idEssai WHERE essai.dureeHold=20 AND essai.commentaire='var dureeHold'
+f(t) = 199.4733327953145 * ( t - -9.999999999999998 ) ^ -2
+## Requête : SELECT essai_res.fichierFreq FROM essai_res JOIN essai ON essai.id=essai_res.idEssai WHERE essai.dureeHold=30 AND essai.commentaire='var dureeHold'
+f(t) = 241.37173073076082 * ( t - -9.999999999999998 ) ^ -2
+```
+
 ## Keskifofer
 
 ### Stream caméra vers pc

@@ -8,6 +8,8 @@ import sqlite3
 import tkinter as tk
 from tkinter.messagebox import *
 from tkinter.simpledialog import *
+from scipy.optimize import curve_fit
+from scipy.stats import linregress
 
 root_window = tk.Tk()
 root_window.withdraw()
@@ -133,20 +135,151 @@ def processDataDir(directory,freqdir="res/freq/",fig_peaks_dir="fig_peaks_main/"
 def readData(datafname,t="t",sig="d2"):
     npzf = np.load(datafname)
     return npzf[t], npzf[sig]
+def readFreq(path):
+    t,f = readData("../../"+path,t="freq_t",sig="freq")
+    for i in range(len(f)):
+            if f[i]==0.:
+                t = t[:i+1]
+                f = f[:i+1]
+                break
+    return t,f
 
-def plotFreq(dir):
+
+def plotFreq(dir,plotAll=True,plotAvg=True):
+    tf = []
     for dirName, subdirList, fileList in os.walk("../../"+dir, topdown=False):
             for fname in fileList:
                 if fname.endswith("_freq.npz"):
-                    t,f = readData("../../"+dir+fname,t="freq_t",sig="freq")
-                    for i in range(len(f)):
-                            if f[i]==0.:
-                                t = t[:i+1]
-                                f = f[:i+1]
-                                break
-                    plt.plot(t,f)
+                    t,f = readFreq(dir+fname)
+                    if plotAvg:tf.append((t,f))
+                    if plotAll:plt.plot(t,f)
+    if plotAvg:
+        t2,f2 = averageData(tf)
+        plt.plot(t2,f2)
+
+def avgFreq(dir):
+    tf = []
+    for dirName, subdirList, fileList in os.walk("../../"+dir, topdown=False):
+            for fname in fileList:
+                if fname.endswith("_freq.npz"):
+                    t,f = readFreq(dir+fname)
+                    tf.append((t,f))
+    t2,f2 = averageData(tf)
+    return t2,f2
 
 def processDataDirPlus(*subfolders_of_video_data):
     for sub in subfolders_of_video_data:
         s = "" if sub.endswith("/") else "/"
         processDataDir("video_data/"+sub+s,"res/freq/"+sub+s)
+
+def averageData(l):
+    '''
+     args : tuples (t,sig)
+     10 Hz
+    '''
+    m=float("+inf")
+    M=float("-inf")
+    Hz=0
+    for t,f in l:
+        if (t[0]<m) : m=t[0]
+        if (t[-1]>M) : M=t[-1]
+        c = len(t)/(t[-1]-t[0])
+        if c>Hz:Hz=c
+    t2 = np.linspace(m,M,num=int(Hz*(M-m)))
+    moy=[0 for x in t2]
+    for t,f in l:
+        for i in range(len(t2)):
+            moy[i]+=np.interp(t2[i],t,f,right=0.0)
+    return t2, np.array(moy)/len(l)
+
+def avgFreqDB(**kwargs):
+    ## exemple : avgFreqDB(nomPapier="A4",diametre=0.002)
+    nomFichier = kwargs.get('nomFichier',None)
+    nomPapier = kwargs.get("nomPapier",None)
+    nomCondexp = kwargs.get("nomCondexp",None)
+    nomSurface = kwargs.get("nomSurface",None)
+    diametre = kwargs.get("diametre",None)
+    longueur = kwargs.get("longueur",None)
+    largeur = kwargs.get("largeur",None)
+    dureeHold = kwargs.get("dureeHold",None)
+    commentaire = kwargs.get("commentaire",None)
+
+    where=""
+    if nomFichier!=None:where+=" AND essai.nomFichier='"+nomFichier+"'"
+    if nomPapier!=None:where+=" AND essai.nomPapier='"+nomPapier+"'"
+    if nomCondexp!=None:where+=" AND essai.nomCondexp='"+nomCondexp+"'"
+    if nomSurface!=None:where+=" AND essai.nomFichier='"+nomSurface+"'"
+    if diametre!=None:where+=" AND essai.diametre="+str(diametre)
+    if longueur!=None:where+=" AND essai.longueur="+str(longueur)
+    if largeur!=None:where+=" AND essai.largeur="+str(largeur)
+    if dureeHold!=None:where+=" AND essai.dureeHold="+str(dureeHold)
+    if commentaire!=None:where+=" AND essai.commentaire='"+commentaire+"'"
+    where=where[5:]
+    print("## Requête : SELECT essai_res.fichierFreq FROM essai_res JOIN essai ON essai.id=essai_res.idEssai WHERE "+where)
+    cur.execute("SELECT essai_res.fichierFreq FROM essai_res JOIN essai ON essai.id=essai_res.idEssai WHERE "+where)
+    tab=list(cur)
+    tf=[]
+    for line in tab :
+        t,f = readFreq(line[0])
+        tf.append((t,f))
+    return averageData(tf)
+
+def regressionExp(t,f):
+    phi = lambda x,x0,a,b:a*np.exp((x-x0)*b)
+    popt,pcov=curve_fit(phi, t, f,bounds=((-200,0,float("-inf")),(200,float("+inf"),0)) , p0=(0,1,-1))
+    return t,np.array([phi(x,*popt) for x in t]),popt
+
+def regressionPow(t,f):
+    phi = lambda x,x0,a,b:a*(x-x0)**b
+    popt,pcov=curve_fit(phi, t, f,bounds=((-10,-10000,-4),(5,10000,4)) , p0=(0,1,-1))
+    return t,np.array([phi(x,*popt) for x in t]),popt
+
+def regressionPowF(t,f,power=-1):
+    phi = lambda x,x0,a : a*(x-x0)**power
+    popt,pcov=curve_fit(phi, t, f,bounds=((-5,-10000),(t[0],10000)) , p0=(0,1))
+    f2 = np.array([phi(x,*popt) for x in t])
+    r_squared = 1 - np.sum((f-f2)**2)/np.sum((f-np.average(f))**2)
+    return t,f2,*popt,r_squared
+
+def regressionT(t,f):
+    ## curve_fit PERIODE morceaux (phases)
+    def phi(x,a1,b1,a2,b2,x1,x2):
+        return ( a1*x+b1 ) * (x<=x1) + ( (a2*x2+b2-a1*x1-b1)*(x-x1)/(x2-x1) + a1*x1+b1 ) * (x1<x)*(x<x2) + ( a2*x+b2 ) * (x>=x2)
+        T=1/f
+    popt, pcov = curve_fit( phi, t, T, p0=(1,0,1,0,t[len(t)//2],t[-1]) )
+    T2 = np.array([phi(x,*popt) for x in t])
+    i_c = np.searchsorted(t,x_c)
+    r1_squared = 1 - np.sum((T[:i_c]-T2[:i_c])**2)/np.sum((T[:i_c]-np.average(T[:i_c]))**2)
+    r2_squared = 1 - np.sum((T[i_c:]-T2[i_c:])**2)/np.sum((T[i_c:]-np.average(T[i_c:]))**2)
+    #print("i_c=",i_c,"; r²=",r1_squared)
+    #print("i_c=",i_c,"; r²=",r2_squared)
+    r_squared = np.sqrt(r1_squared*r2_squared)
+
+    return t,T2,*popt,r_squared
+
+
+
+def regressionT1(t,f):
+    ## régression PERIODE seulement première phase
+    r_squared_min=0.9
+    T = 1/f[:-1]
+    j=len(T)
+    r_value=0
+    phi = lambda x,a,b : a*x+b
+    while (j>0 and r_value**2<r_squared_min):
+        a1,b1,r_value,p_value,std_err = linregress(t[:j],T[:j])
+        j-=1
+    plt.plot(t[:j],phi(t[:j],a1,b1))
+
+
+
+'''def regressionPowF(t,f,power=-1):
+    phi = lambda x,x0,a : a*(x-x0)**power
+    slope,intercept,r_value,p_value,std_err = linregress(t[:-1],np.power(f[:-1],1/power)) # jusqu'à -1 car nul
+    # print(np.power(f,1/power))
+    # print(slope)
+    # print(intercept)
+    a = slope**p
+    x0 = -intercept/slope
+    return t,np.array([phi(x,x0,a) for x in t]),x0,a,r_value**2'''
+

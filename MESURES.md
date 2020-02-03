@@ -34,21 +34,33 @@ statut : **rien**
 
 ## Manipulation
 
-### Diamètre
+### Diamètre (ancien, à refaire)
 
 statut : **+/- fait** 0129e 0129f
 
 * papier : clairefontaine
 * condexp : normal
 * surface : nesquik
-* **diametre** : 2, 5, 8 mm
+* **diametre** : 2, 5, 10 mm
 * longueur : 20 cm
+* largeur : 2 cm
+* dureeHold : 20 s
+
+### Diamètre (neuf)
+
+statut : **rien**
+
+* papier : A4
+* condexp : normal
+* surface : nesquik
+* **diametre** : 2, 5, 10 mm
+* longueur : 21 cm
 * largeur : 2 cm
 * dureeHold : 20 s
 
 ### dureeHold
 
-statut : **rien**
+statut : **fait**
 
 * papier : A4
 * condexp : normal
@@ -56,7 +68,7 @@ statut : **rien**
 * diametre : 2 mm
 * longueur : 21 cm
 * largeur : 2 cm
-* **dureeHold** : 10, 20, 30 s
+* **dureeHold** : 10, 20, 30 s *>0131a, 0131b, 0131c*
 
 ## Surface
 
