@@ -9,6 +9,7 @@ import tkinter as tk
 from tkinter.messagebox import *
 from tkinter.simpledialog import *
 from scipy.optimize import curve_fit
+from scipy.stats import linregress
 
 root_window = tk.Tk()
 root_window.withdraw()
@@ -235,5 +236,18 @@ def regressionPow(t,f):
 
 def regressionPowF(t,f,power=-1):
     phi = lambda x,x0,a : a*(x-x0)**power
-    popt,pcov=curve_fit(phi, t, f,bounds=((-10,-10000),(5,10000)) , p0=(0,1))
-    return t,np.array([phi(x,*popt) for x in t]),popt
+    popt,pcov=curve_fit(phi, t, f,bounds=((-5,-10000),(t[0],10000)) , p0=(0,1))
+    f2 = np.array([phi(x,*popt) for x in t])
+    r_squared = 1 - np.sum((f-f2)**2)/np.sum((f-np.average(f))**2)
+    return t,f2,*popt,r_squared
+
+'''def regressionPowF(t,f,power=-1):
+    phi = lambda x,x0,a : a*(x-x0)**power
+    slope,intercept,r_value,p_value,std_err = linregress(t[:-1],np.power(f[:-1],1/power)) # jusqu'à -1 car nul
+    # print(np.power(f,1/power))
+    # print(slope)
+    # print(intercept)
+    a = slope**p
+    x0 = -intercept/slope
+    return t,np.array([phi(x,x0,a) for x in t]),x0,a,r_value**2'''
+
