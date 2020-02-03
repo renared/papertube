@@ -241,6 +241,30 @@ def regressionPowF(t,f,power=-1):
     r_squared = 1 - np.sum((f-f2)**2)/np.sum((f-np.average(f))**2)
     return t,f2,*popt,r_squared
 
+def regressionT(t,f):
+    ## bilan des travaux : f=a/(t-t0), on choisit donc d'étudier en période et non fréquence
+    r_squared_min=0.9
+    r_squared_min2=0.82
+    T = 1/f[:-1]
+    j=len(T)
+    r_value=0
+    phi = lambda x,a,b : a*x+b
+    while (j>0 and r_value**2<r_squared_min):
+        a1,b1,r_value,p_value,std_err = linregress(t[:j],T[:j])
+        j-=1
+    plt.plot(t[:j],phi(t[:j],a1,b1))
+
+    k=j
+    r_value=0
+    while (k<len(T)-1 and r_value**2<r_squared_min2):
+        a2,b2,r_value,p_value,std_err = linregress(t[k:-1],T[k:])
+        k+=1
+    plt.plot(t[k:],phi(t[k:],a2,b2))
+
+    t_c = (b2-b1)/(a1-a2)
+    plt.scatter(t_c,phi(t_c,a2,b2),s=50)
+
+
 '''def regressionPowF(t,f,power=-1):
     phi = lambda x,x0,a : a*(x-x0)**power
     slope,intercept,r_value,p_value,std_err = linregress(t[:-1],np.power(f[:-1],1/power)) # jusqu'à -1 car nul
