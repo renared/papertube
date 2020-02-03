@@ -242,6 +242,20 @@ def regressionPowF(t,f,power=-1):
     return t,f2,*popt,r_squared
 
 def regressionT(t,f):
+    def phi(x,a1,b1,a2,x_c):
+        return ( a1*x+b1 ) * (x<=x_c) + ( a2*x+(a1-a2)*x_c+b1 ) * (x>x_c)
+        T=1/f
+    popt, pcov = curve_fit( phi, t, T, p0=(1,0,1,t[len(t)//2]) )
+    T2 = np.array([phi(x,*popt) for x in t])
+    i_c = np.searchsorted(t,x_c)
+    r1_squared = 1 - np.sum((T[:i_c]-T2[:i_c])**2)/np.sum((T[:i_c]-np.average(T[:i_c]))**2)
+    print("i_c=",i_c,"; r²=",r1_squared)
+
+    return t,T2,*popt
+
+
+
+'''def regressionT(t,f):
     ## bilan des travaux : f=a/(t-t0), on choisit donc d'étudier en période et non fréquence
     r_squared_min=0.9
     r_squared_min2=0.82
@@ -262,7 +276,7 @@ def regressionT(t,f):
     plt.plot(t[k:],phi(t[k:],a2,b2))
 
     t_c = (b2-b1)/(a1-a2)
-    plt.scatter(t_c,phi(t_c,a2,b2),s=50)
+    plt.scatter(t_c,phi(t_c,a2,b2),s=50)'''
 
 
 '''def regressionPowF(t,f,power=-1):
