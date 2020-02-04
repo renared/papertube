@@ -239,7 +239,7 @@ def regressionPowF(t,f,power=-1):
     popt,pcov=curve_fit(phi, t, f,bounds=((-5,-10000),(t[0],10000)) , p0=(0,1))
     f2 = np.array([phi(x,*popt) for x in t])
     r_squared = 1 - np.sum((f-f2)**2)/np.sum((f-np.average(f))**2)
-    return t,f2,*popt,r_squared
+    return t,f2,popt[0],popt[1],r_squared
 
 def regressionT(t,f):
     ## curve_fit PERIODE morceaux (phases)
@@ -255,7 +255,8 @@ def regressionT(t,f):
     #print("i_c=",i_c,"; r²=",r2_squared)
     r_squared = np.sqrt(r1_squared*r2_squared)
 
-    return t,T2,*popt,r_squared
+    #return t,T2,*popt,r_squared
+    return t,T2,popt[0],popt[1],popt[2],popt[3],popt[4],popt[5],r_squared
 
 
 
