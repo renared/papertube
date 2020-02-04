@@ -76,7 +76,7 @@ statut : **rien**
 
 * papier : A4
 * condexp : normal
-* **surface** : nesquik, carton, A4, ... > 0204b, 0204a, 0204c
+* **surface** : nesquik, carton, A4, rubleu > 0204b, 0204a, 0204c, 0204d
 * diametre : 2 mm
 * longueur : 21 cm
 * largeur : 2 cm
