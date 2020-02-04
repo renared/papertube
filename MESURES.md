@@ -76,8 +76,8 @@ statut : **rien**
 
 * papier : A4
 * condexp : normal
-* **surface** : nesquik, carton, A4, ...
+* **surface** : nesquik, carton, A4, ... > 0204b, 0204a, 0204c
 * diametre : 2 mm
 * longueur : 21 cm
-* largeur : 3 cm
+* largeur : 2 cm
 * dureeHold : 20 s
