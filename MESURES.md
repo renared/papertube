@@ -28,9 +28,9 @@ statut : **fait** 0130d 0130e 0130f
 
 ### Type de papier
 
-statut : **rien** 
+statut : **fait** 
 
-* **papier** : A4, sulfu, ... > 0205d 0205e
+* **papier** : A4, sulfu, cartonne > 0205d 0205e 0205f  [A4 : 70g/cm2, cartonne : 160g/cm2]
 * condexp : normal
 * surface : nesquik
 * diametre : 2 mm
@@ -82,7 +82,7 @@ statut : **fait**
 
 * papier : A4
 * condexp : normal
-* **surface** : *nesquik*, carton, A4, rubleu > 0204b, 0204a, 0204c, 0204d (remarque : la config nesquik a déjà été faite cf var largeur)
+* **surface** : *nesquik*, carton, A4, rubleu > 0204a, 0204b, 0204c, 0204d (remarque : la config nesquik a déjà été faite cf var largeur)
 * diametre : 2 mm
 * longueur : 21 cm
 * largeur : 2 cm
