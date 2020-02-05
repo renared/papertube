@@ -28,9 +28,15 @@ statut : **fait** 0130d 0130e 0130f
 
 ### Type de papier
 
-statut : **rien**
+statut : **rien** 
 
-à compléter
+* **papier** : A4, sulfu, ... > 0205d 0205e
+* condexp : normal
+* surface : nesquik
+* diametre : 2 mm
+* longueur : 29.7 cm
+* **largeur : 2 cm**
+* dureeHold : 20 s
 
 ## Manipulation
 
@@ -48,14 +54,14 @@ statut : **+/- fait** 0129e 0129f
 
 ### Diamètre (neuf)
 
-statut : **rien**
+statut : **fait**
 
 * papier : A4
 * condexp : normal
 * surface : nesquik
-* **diametre** : 2, 5, 10 mm
-* longueur : 21 cm
-* largeur : 2 cm
+* **diametre** : 2, 5, 10 mm (remarque : la config 2 mm a déjà été faite cf var longueur) > *0205a* 0205b 0205c
+* longueur : 29.7 cm
+* largeur : 3 cm
 * dureeHold : 20 s
 
 ### dureeHold
@@ -72,12 +78,12 @@ statut : **fait**
 
 ## Surface
 
-statut : **rien**
+statut : **fait**
 
 * papier : A4
 * condexp : normal
-* **surface** : nesquik, carton, A4, ...
+* **surface** : *nesquik*, carton, A4, rubleu > 0204b, 0204a, 0204c, 0204d (remarque : la config nesquik a déjà été faite cf var largeur)
 * diametre : 2 mm
 * longueur : 21 cm
-* largeur : 3 cm
+* largeur : 2 cm
 * dureeHold : 20 s
