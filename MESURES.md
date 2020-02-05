@@ -53,7 +53,7 @@ statut : **fait**
 * papier : A4
 * condexp : normal
 * surface : nesquik
-* **diametre** : 2, 5, 10 mm (remarque : la config 2 mm a déjà été faite cf var longueur)
+* **diametre** : 2, 5, 10 mm (remarque : la config 2 mm a déjà été faite cf var longueur) > *0205a* 0205b 0205c
 * longueur : 29.7 cm
 * largeur : 3 cm
 * dureeHold : 20 s
