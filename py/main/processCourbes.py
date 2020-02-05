@@ -187,13 +187,22 @@ def averageData(l):
         if c>Hz:Hz=c
     t2 = np.linspace(m,M,num=int(Hz*(M-m)))
     moy=[0 for x in t2]
+    ecarts_carre=[0 for x in t2]
+    # calcul moyenne
     for t,f in l:
         for i in range(len(t2)):
             moy[i]+=np.interp(t2[i],t,f,right=0.0)
-    return t2, np.array(moy)/len(l)
+    moy = np.array(moy)/len(l)
+    # calcul des écarts à la moyenne
+    for t,f in l:
+        for i in range(len(t2)):
+            ecarts_carre[i]+=( np.interp(t2[i],t,f,right=0.0) - moy[i] )**2
+    ecarts_types = np.sqrt(np.array(ecarts_carre))
+    return t2, moy, ecarts_types
 
 def avgFreqDB(**kwargs):
-    ## exemple : avgFreqDB(nomPapier="A4",diametre=0.002)
+    ''' exemple : avgFreqDB(nomPapier="A4",diametre=0.002)
+    ou encore avgFreqDB(where="essai.diametre<0.01")'''
     nomFichier = kwargs.get('nomFichier',None)
     nomPapier = kwargs.get("nomPapier",None)
     nomCondexp = kwargs.get("nomCondexp",None)
@@ -203,20 +212,23 @@ def avgFreqDB(**kwargs):
     largeur = kwargs.get("largeur",None)
     dureeHold = kwargs.get("dureeHold",None)
     commentaire = kwargs.get("commentaire",None)
+    where = kwargs.get("where",None)
 
-    where=""
-    if nomFichier!=None:where+=" AND essai.nomFichier='"+nomFichier+"'"
-    if nomPapier!=None:where+=" AND essai.nomPapier='"+nomPapier+"'"
-    if nomCondexp!=None:where+=" AND essai.nomCondexp='"+nomCondexp+"'"
-    if nomSurface!=None:where+=" AND essai.nomFichier='"+nomSurface+"'"
-    if diametre!=None:where+=" AND essai.diametre="+str(diametre)
-    if longueur!=None:where+=" AND essai.longueur="+str(longueur)
-    if largeur!=None:where+=" AND essai.largeur="+str(largeur)
-    if dureeHold!=None:where+=" AND essai.dureeHold="+str(dureeHold)
-    if commentaire!=None:where+=" AND essai.commentaire='"+commentaire+"'"
-    where=where[5:]
-    print("## Requête : SELECT essai_res.fichierFreq FROM essai_res JOIN essai ON essai.id=essai_res.idEssai WHERE "+where)
-    cur.execute("SELECT essai_res.fichierFreq FROM essai_res JOIN essai ON essai.id=essai_res.idEssai WHERE "+where)
+    if where==None:
+        where=""
+        if nomFichier!=None:where+=" AND essai.nomFichier='"+nomFichier+"'"
+        if nomPapier!=None:where+=" AND essai.nomPapier='"+nomPapier+"'"
+        if nomCondexp!=None:where+=" AND essai.nomCondexp='"+nomCondexp+"'"
+        if nomSurface!=None:where+=" AND essai.nomFichier='"+nomSurface+"'"
+        if diametre!=None:where+=" AND essai.diametre="+str(diametre)
+        if longueur!=None:where+=" AND essai.longueur="+str(longueur)
+        if largeur!=None:where+=" AND essai.largeur="+str(largeur)
+        if dureeHold!=None:where+=" AND essai.dureeHold="+str(dureeHold)
+        if commentaire!=None:where+=" AND essai.commentaire='"+commentaire+"'"
+        where=where[5:]
+
+    print("## Requête : SELECT essai_res.fichierFreq FROM essai_res JOIN essai ON essai.id=essai_res.idEssai WHERE (essai.invalide IS NULL OR essai.invalide!=1) AND "+where)
+    cur.execute("SELECT essai_res.fichierFreq FROM essai_res JOIN essai ON essai.id=essai_res.idEssai WHERE (essai.invalide IS NULL OR essai.invalide!=1) AND "+where)
     tab=list(cur)
     tf=[]
     for line in tab :
