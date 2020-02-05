@@ -48,14 +48,14 @@ statut : **+/- fait** 0129e 0129f
 
 ### Diamètre (neuf)
 
-statut : **rien**
+statut : **fait**
 
 * papier : A4
 * condexp : normal
 * surface : nesquik
-* **diametre** : 2, 5, 10 mm
-* longueur : 21 cm
-* largeur : 2 cm
+* **diametre** : 2, 5, 10 mm (remarque : la config 2 mm a déjà été faite cf var longueur)
+* longueur : 29.7 cm
+* largeur : 3 cm
 * dureeHold : 20 s
 
 ### dureeHold
@@ -76,7 +76,7 @@ statut : **fait**
 
 * papier : A4
 * condexp : normal
-* **surface** : nesquik, carton, *A4*, rubleu > 0204b, 0204a, 0204c, 0204d (remarque : la config A4 a déjà été faite)
+* **surface** : *nesquik*, carton, A4, rubleu > 0204b, 0204a, 0204c, 0204d (remarque : la config nesquik a déjà été faite cf var largeur)
 * diametre : 2 mm
 * longueur : 21 cm
 * largeur : 2 cm
