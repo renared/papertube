@@ -72,11 +72,11 @@ statut : **fait**
 
 ## Surface
 
-statut : **rien**
+statut : **fait**
 
 * papier : A4
 * condexp : normal
-* **surface** : nesquik, carton, A4, rubleu > 0204b, 0204a, 0204c, 0204d
+* **surface** : nesquik, carton, *A4*, rubleu > 0204b, 0204a, 0204c, 0204d (remarque : la config A4 a déjà été faite)
 * diametre : 2 mm
 * longueur : 21 cm
 * largeur : 2 cm
