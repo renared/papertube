@@ -28,9 +28,15 @@ statut : **fait** 0130d 0130e 0130f
 
 ### Type de papier
 
-statut : **rien**
+statut : **débuté** 
 
-à compléter
+* **papier** : A4, sulfu, ... > 0205d 0205e
+* condexp : normal
+* surface : nesquik
+* diametre : 2 mm
+* longueur : 29.7 cm
+* largeur : 3 cm
+* dureeHold : 20 s
 
 ## Manipulation
 
