@@ -149,13 +149,13 @@ def selectData(k):
     Lparam = []
     #On commence par récupérer les différentes valeurs de paramètre
     cur.execute("SELECT "+ conditionCourbe[k] +" FROM essai GROUP BY "+ conditionCourbe[k])
-    print(conditionCourbe[k])
+    print("pom",conditionCourbe[k])
     for row in cur:
         Lparam.append(row[0])
 
     FileTab = []
     for param in Lparam:
-        
+        add = 1
         # switch = {0:   avgFreqDB(nomPapier=param),  1:   avgFreqDB(nomCondexp=param), 2:   avgFreqDB(nomSurface=param), 3:   avgFreqDB(diametre=param), 4:   avgFreqDB(longueur=param), 5:   avgFreqDB(largeur=param), 6:   avgFreqDB(dureeHold=param)}
         # Renvoie trop d'erreurs
         # switch(k){
@@ -171,24 +171,56 @@ def selectData(k):
            
         # tab = switch[k]()   
         
+        # if k==0:
+        #     tab = avgFreqDB(nomPapier=param)
+        # if k==1:
+        #     tab = avgFreqDB(nomCondexp=param)
+        # if k==2:
+        #     tab = avgFreqDB(nomSurface=param)
+        # if k==3:
+        #     tab = avgFreqDB(diametre=param)
+        # if k==4:
+        #     tab = avgFreqDB(longueur=param)
+        # if k==5:
+        #     tab = avgFreqDB(largeur=param)
+        # if k==6:
+        #     tab = avgFreqDB(dureeHold=param)
+        #    
+        
         if k==0:
-            tab = avgFreqDB(nomPapier=param)
+            if (param != 'clairefontaine'):
+                tab = avgFreqDB(nomPapier=param, commentaire="var papier")
+            else:
+                add=0
         if k==1:
             tab = avgFreqDB(nomCondexp=param)
         if k==2:
-            tab = avgFreqDB(nomSurface=param)
+            if (param == 'nesquik'):
+                tab = avgFreqDB(nomSurface=param, largeur=0.02, commentaire="var largeur")
+            elif(param == 'null'):
+                tab = avgFreqDB(nomSurface=param)
+            else:
+                tab = avgFreqDB(nomSurface=param, commentaire="var surface")
         if k==3:
-            tab = avgFreqDB(diametre=param)
+            if(param == 0.002):
+                tab = avgFreqDB(diametre=param, largeur=0.03, commentaire="var largeur")
+            else:
+                tab = avgFreqDB(diametre=param, commentaire="var diametre")
         if k==4:
-            tab = avgFreqDB(longueur=param)
+            if (param == 0.16 or param == 0.2):
+                add = 0
+            else:
+                tab = avgFreqDB(longueur=param, commentaire="var longueur")
         if k==5:
-            tab = avgFreqDB(largeur=param)
+            tab = avgFreqDB(largeur=param, commentaire="var largeur")
         if k==6:
-            tab = avgFreqDB(dureeHold=param)
-           
+            tab = avgFreqDB(dureeHold=param, commentaire="var dureeHold")
+        
+        
         
         # print(tab)
-        FileTab.append([tab[0],tab[1],tab[2]])
+        if add:
+            FileTab.append([tab[0],tab[1],tab[2]])
     
     
     return FileTab, Lparam
@@ -242,10 +274,7 @@ def printCourbes3D(ax, k=4):
     
     for i in range(len(tab)):
             
-        e = tab[i] # e : tableau des [[T],[V]]
-        xts = e[0]
-        ys = e[1]
-        yvars = e[2]
+        xts, ys, yvar = tab[i] # e : tableau des [[T],[V]]
         FREQ.append(ys)
         TIME.append(xts)
         # You can provide either a single color or an array with the same length as
@@ -255,9 +284,11 @@ def printCourbes3D(ax, k=4):
         cs = ['b'] * len(xts)
         #cs[0] = 'c'
         param = Lparam[i]
+        zs = i
         # Plot the bar graph given by xs and ys on the plane y=k with 80% opacity.
         ax.plot3D(xts, ys, zs=i, zdir='y', c=pltColors[i], alpha=0.8, label = param)
-        ax.plot3D(xts, yvars*ys, zs=i, zdir='y',c=pltColors[i], alpha=0.4, linestyle='dashed')
+        ax.plot3D(xts, yvar, zs=i, zdir='y',c=pltColors[i], alpha=0.4, linestyle='dashed')
+        # ax.contourf(xts,zs=i,[ys-yvar,ys+yvar], zdir ='y',alpha=0.2)
         # ax.bar(xts, ys, zs=param, zdir='y', color=cs, alpha=0.8)
     ax.set_title(conditionCourbe[k]) #Optionel => Déjà dans les y
     # ax.legend() #Pas besoin => Déjà dans les y
@@ -275,11 +306,14 @@ def printCourbes3D(ax, k=4):
 def printCourbes2D(dim3=0):
     fig = plt.figure()
 
-    for k in range(len(conditionCourbe)):
+    for k in [ u for u in range(0,len(conditionCourbe)) if u != 1 ]:
+        print(k)
         tab, Lparam = selectData(k) 
-    
-        ax = fig.add_subplot(2,len(conditionCourbe)/2+1,k+1)
-
+        if k ==0:
+            # ax = fig.add_subplot(2,(len(conditionCourbe)-1)/2+1,k+1)
+            ax = fig.add_subplot(2,(len(conditionCourbe)-1)/2,k+1)
+        else:
+            ax = fig.add_subplot(2,(len(conditionCourbe)-1)/2,k)
         TIME=[]
         FREQ=[]
         PARAM=[Laparam for i in range(len(TIME))]
@@ -288,10 +322,7 @@ def printCourbes2D(dim3=0):
         for i in range(len(tab)):
             # for j in range(len(tab[i])):
             
-            e = tab[i] # e : tableau des [[T],[V]]
-            xts = e[0]
-            ys = e[1]
-            yvar = e[2]
+            xts, ys, yvar = tab[i] # e : tableau des [[T],[V]]
             FREQ.append(ys)
             TIME.append(xts)
             # You can provide either a single color or an array with the same length as
@@ -299,9 +330,22 @@ def printCourbes2D(dim3=0):
             cs = ['b'] * len(xts)
             #cs[0] = 'c'
             param = Lparam[i]
+            # # Soit on affiche la moy en freq
+            # ax.plot(xts, ys, pltColors[i], alpha=0.8, label = param)
+            # # ax.plot(xts, yvar, pltColors[i]+':', alpha=0.8)
+            # ax.fill_between(xts,ys-yvar/2,ys+yvar/2,color = pltColors[i],alpha=0.2)
+            # 
+            #Soit on affiche les reg en periode
             
-            ax.plot(xts, ys, pltColors[i], alpha=0.8, label = param)
-            ax.plot(xts, yvar*ys, pltColors[i]+':', alpha=0.8)
+            xts,ys=xts[:-1],ys[:-1]
+            T = 1/ys
+            err = T/(1+yvar[:-1]*T)    # calcul de l'erreur sur T à partir de l'erreur sur f
+            t2,T2,a1,b1,r_squared = regressionT1(xts,ys)
+                        
+            ax.plot(t2, T2, pltColors[i], alpha=0.8, label = param)
+            # ax.fill_between(xts,ys-yvar/2,ys+yvar/2,color = pltColors[i],alpha=0.2)
+                
+            
         ax.set_title(conditionCourbe[k])
         ax.legend()
         ax.set_xlabel('Time')
