@@ -349,7 +349,7 @@ def printCourbes2D(dim3=0):
             elif param == "cartonne":
                 ax.plot(t2, T2, pltColors[i], alpha=0.8, label = "Hard paper")
             elif param == "rubleu":
-                ax.plot(t2, T2, pltColors[i], alpha=0.8, label = "Painted metal")
+                ax.plot(t2, T2, pltColors[i], alpha=0.8, label = "Imitation leather")
             elif param == "null":
                 ()
                 #ax.plot(t2, T2, pltColors[i], alpha=0.8, label = param)
