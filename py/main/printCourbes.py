@@ -30,6 +30,7 @@ import numpy as np
 np.random.seed(19680801)
 
 conditionCourbe = ['nomPapier', 'nomCondexp', 'nomSurface', 'diametre', 'longueur', 'largeur', 'dureeHold']
+conditionCourbeEN = ['PaperName', 'nomCondexp', 'SurfaceName', 'Diameter', 'Length', 'Width', 'HoldingTime']
 pltColors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
 
 
@@ -340,16 +341,30 @@ def printCourbes2D(dim3=0):
             xts,ys=xts[:-1],ys[:-1]
             T = 1/ys
             err = T/(1+yvar[:-1]*T)    # calcul de l'erreur sur T à partir de l'erreur sur f
-            t2,T2,a1,b1,r_squared = regressionT1(xts,ys)
-                        
-            ax.plot(t2, T2, pltColors[i], alpha=0.8, label = param)
-            # ax.fill_between(xts,ys-yvar/2,ys+yvar/2,color = pltColors[i],alpha=0.2)
+            t2,T2,a1,b1,r_squared = regressionT1(xts,ys, plot=False)
+            if param == 0.002 or param == 0.005 or param == 0.01:
+                ax.plot(t2, T2, pltColors[i], alpha=0.8, label = param*2)
+            elif param == "carton":
+                ax.plot(t2, T2, pltColors[i], alpha=0.8, label = "Cardboard")
+            elif param == "cartonne":
+                ax.plot(t2, T2, pltColors[i], alpha=0.8, label = "Hard paper")
+            elif param == "rubleu":
+                ax.plot(t2, T2, pltColors[i], alpha=0.8, label = "Painted metal")
+            elif param == "null":
+                ()
+                #ax.plot(t2, T2, pltColors[i], alpha=0.8, label = param)
+            else:
+                ax.plot(t2, T2, pltColors[i], alpha=0.8, label = param)
+            bL = len(t2)
+            if param != "null":
+                ax.fill_between(xts[:bL],T[:bL]-err[:bL],T[:bL]+err[:bL],color = pltColors[i],alpha=0.2)
                 
             
-        ax.set_title(conditionCourbe[k])
+        ax.set_title(conditionCourbeEN[k])
         ax.legend()
         ax.set_xlabel('Time')
-        ax.set_ylabel('Frequency')
+        # ax.set_ylabel('Frequency')
+        ax.set_ylabel('Period')
     
     # On the y axis let's only label the discrete values that we have data for.
     # ax.set_yticks(yticks)
