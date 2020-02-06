@@ -30,7 +30,7 @@ import numpy as np
 np.random.seed(19680801)
 
 conditionCourbe = ['nomPapier', 'nomCondexp', 'nomSurface', 'diametre', 'longueur', 'largeur', 'dureeHold']
-conditionCourbeEN = ['PaperName', 'nomCondexp', 'SurfaceName', 'Diameter', 'Length', 'Width', 'HoldingTime']
+conditionCourbeEN = ['Paper Name','Experimental Conditions', 'Surface Name', 'Diameter', 'Length', 'Width', 'Holding Time']
 pltColors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
 
 
@@ -291,10 +291,10 @@ def printCourbes3D(ax, k=4):
         ax.plot3D(xts, yvar, zs=i, zdir='y',c=pltColors[i], alpha=0.4, linestyle='dashed')
         # ax.contourf(xts,zs=i,[ys-yvar,ys+yvar], zdir ='y',alpha=0.2)
         # ax.bar(xts, ys, zs=param, zdir='y', color=cs, alpha=0.8)
-    ax.set_title(conditionCourbe[k]) #Optionel => Déjà dans les y
+    ax.set_title(conditionCourbeEN[k]) #Optionel => Déjà dans les y
     # ax.legend() #Pas besoin => Déjà dans les y
     ax.set_xlabel('Time')
-    ax.set_ylabel(conditionCourbe[k])
+    # ax.set_ylabel(conditionCourbeEN[k])
     ax.set_zlabel('Frequency')
     
     # On the y axis let's only label the discrete values that we have data for.
