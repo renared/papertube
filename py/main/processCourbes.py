@@ -219,7 +219,7 @@ def avgFreqDB(**kwargs):
         if nomFichier!=None:where+=" AND essai.nomFichier='"+nomFichier+"'"
         if nomPapier!=None:where+=" AND essai.nomPapier='"+nomPapier+"'"
         if nomCondexp!=None:where+=" AND essai.nomCondexp='"+nomCondexp+"'"
-        if nomSurface!=None:where+=" AND essai.nomFichier='"+nomSurface+"'"
+        if nomSurface!=None:where+=" AND essai.nomSurface='"+nomSurface+"'"
         if diametre!=None:where+=" AND essai.diametre="+str(diametre)
         if longueur!=None:where+=" AND essai.longueur="+str(longueur)
         if largeur!=None:where+=" AND essai.largeur="+str(largeur)
