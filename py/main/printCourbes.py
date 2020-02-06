@@ -9,6 +9,7 @@ import tkinter as tk
 from tkinter.messagebox import *
 from tkinter.simpledialog import *
 from processCourbes import *
+import matplotlib.patheffects as mpe
 
 
 root_window = tk.Tk()
@@ -154,6 +155,19 @@ def selectData(k):
     for row in cur:
         Lparam.append(row[0])
 
+    # MÉTHODE DU PAUVRE
+    if k!=4:
+        if "nesquik" in Lparam:
+            Lparam=['rubleu','A4','carton','nesquik']
+        elif 0.03 in Lparam:
+            Lparam=[0.05,0.03,0.02]
+        elif 10.0 in Lparam:
+            Lparam=[20.0,30.0,10.0]
+        elif 0.1485 in Lparam:
+            Lparam=[0.2,0.1485,0.16]
+        
+    
+    
     FileTab = []
     for param in Lparam:
         add = 1
@@ -342,22 +356,25 @@ def printCourbes2D(dim3=0):
             T = 1/ys
             err = T/(1+yvar[:-1]*T)    # calcul de l'erreur sur T à partir de l'erreur sur f
             t2,T2,a1,b1,r_squared = regressionT1(xts,ys, plot=False)
+            
+            outline=mpe.withStroke(linewidth=4, foreground='black')
+            
             if param == 0.002 or param == 0.005 or param == 0.01:
-                ax.plot(t2, T2, pltColors[i], alpha=0.8, label = param*2)
+                ax.plot(t2, T2, pltColors[i], alpha=0.8, label = param*2,linewidth=3, path_effects=[outline])
             elif param == "carton":
-                ax.plot(t2, T2, pltColors[i], alpha=0.8, label = "Cardboard")
+                ax.plot(t2, T2, pltColors[i], alpha=0.8, label = "Cardboard",linewidth=3, path_effects=[outline])
             elif param == "cartonne":
-                ax.plot(t2, T2, pltColors[i], alpha=0.8, label = "Hard paper")
+                ax.plot(t2, T2, pltColors[i], alpha=0.8, label = "Hard paper",linewidth=3, path_effects=[outline])
             elif param == "rubleu":
-                ax.plot(t2, T2, pltColors[i], alpha=0.8, label = "Imitation leather")
+                ax.plot(t2, T2, pltColors[i], alpha=0.8, label = "Imitation leather",linewidth=3, path_effects=[outline])
             elif param == "null":
                 ()
                 #ax.plot(t2, T2, pltColors[i], alpha=0.8, label = param)
             else:
-                ax.plot(t2, T2, pltColors[i], alpha=0.8, label = param)
+                ax.plot(t2, T2, pltColors[i], alpha=0.8, label = param,linewidth=3, path_effects=[outline])
             bL = len(t2)
             if param != "null":
-                ax.fill_between(xts[:bL],T[:bL]-err[:bL],T[:bL]+err[:bL],color = pltColors[i],alpha=0.2)
+                ax.fill_between(xts[:bL],T[:bL]-err[:bL],T[:bL]+err[:bL],color = pltColors[i],alpha=0.3)
                 
             
         ax.set_title(conditionCourbeEN[k])
@@ -377,14 +394,14 @@ def printCourbes2D(dim3=0):
 
 ##Affichage final
 
-fig = plt.figure()
-for k in range(len(conditionCourbe)):
-    ax = fig.add_subplot(2,len(conditionCourbe)/2+1,k+1, projection='3d')
-    
-    printCourbes3D(ax, k)
-    
-
-plt.show()
+# fig = plt.figure()
+# for k in range(len(conditionCourbe)):
+#     ax = fig.add_subplot(2,len(conditionCourbe)/2+1,k+1, projection='3d')
+#     
+#     printCourbes3D(ax, k)
+#     
+# 
+# plt.show()
 printCourbes2D()
 
 ### Test
