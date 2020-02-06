@@ -29,6 +29,10 @@ import numpy as np
 # Fixing random state for reproducibility
 np.random.seed(19680801)
 
+conditionCourbe = ['nomPapier', 'nomCondexp', 'nomSurface', 'diametre', 'longueur', 'largeur', 'dureeHold']
+pltColors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
+
+
 
 
 ## On récupère les données
@@ -38,9 +42,9 @@ np.random.seed(19680801)
 # t = ('A4',)
 # cur.execute('SELECT * FROM essai WHERE nomPapier=?', t)
 # print cur.fetchone()
-conditionCourbe = ['nomPapier', 'nomCondexp', 'nomSurface', 'diametre', 'longueur', 'largeur', 'dureeHold']
 
-def selectData(k):
+
+def selectData1(k):
     Lparam = []
     #On commence par récupérer les différentes valeurs de paramètre
     cur.execute("SELECT "+ conditionCourbe[k] +" FROM essai GROUP BY "+ conditionCourbe[k])
@@ -69,36 +73,15 @@ def selectData(k):
         FileTab.append(subFileTab)
     return FileTab, Lparam
 
-# Larger example that inserts many records at a time
-# purchases = [('2006-03-28', 'BUY', 'IBM', 1000, 45.00),
-#              ('2006-04-05', 'BUY', 'MSFT', 1000, 72.00),
-#              ('2006-04-06', 'SELL', 'IBM', 500, 53.00),
-#             ]
-# c.executemany('INSERT INTO stocks VALUES (?,?,?,?,?)', purchases)
-
-# To retrieve data after executing a SELECT statement, you can either treat the cursor as an iterator, call the cursor’s fetchone() method to retrieve a single matching row, or call fetchall() to get a list of the matching rows.
-
-# This example uses the iterator form:
-# 
-# >>> for row in c.execute('SELECT * FROM stocks ORDER BY price'):
-#         print row
-# 
-# (u'2006-01-05', u'BUY', u'RHAT', 100, 35.14)
-# (u'2006-03-28', u'BUY', u'IBM', 1000, 45.0)
-# (u'2006-04-06', u'SELL', u'IBM', 500, 53.0)
-# (u'2006-04-05', u'BUY', u'MSFT', 1000, 72.0)
-
-
-
-
-
 ## On affiche
 
-def printCourbes3D(ax, k=4):
-    # fig = plt.figure()
-    # ax = fig.add_subplot(111, projection='3d')
-    # 
-    tab, Lparam = selectData(k)
+def printCourbes3D1(ax, k=4):
+    # On affiche tout :
+    tab, Lparam = selectData1(k) 
+    
+    # Ou on affiche les moyennes
+    # tab = avgFreqDB(conditionCourbe[k])
+    # tab = avgFreqDB(nomPapier="A4",diametre=0.002)
     
     TIME=[]
     FREQ=[]
@@ -115,6 +98,7 @@ def printCourbes3D(ax, k=4):
             TIME.append(xts)
             # You can provide either a single color or an array with the same length as
             # xs and ys. To demonstrate this, we color the first bar of each set cyan.
+            print("xts :",xts)
             cs = ['b'] * len(xts)
             #cs[0] = 'c'
             param = Lparam[i]
@@ -156,12 +140,199 @@ def printCourbes3D(ax, k=4):
     ax.set_yticklabels(Lparam)
     
     # plt.show()
+
+
     
+## Avec avgFreqDB :
+
+def selectData(k):
+    Lparam = []
+    #On commence par récupérer les différentes valeurs de paramètre
+    cur.execute("SELECT "+ conditionCourbe[k] +" FROM essai GROUP BY "+ conditionCourbe[k])
+    print(conditionCourbe[k])
+    for row in cur:
+        Lparam.append(row[0])
+
+    FileTab = []
+    for param in Lparam:
+        
+        # switch = {0:   avgFreqDB(nomPapier=param),  1:   avgFreqDB(nomCondexp=param), 2:   avgFreqDB(nomSurface=param), 3:   avgFreqDB(diametre=param), 4:   avgFreqDB(longueur=param), 5:   avgFreqDB(largeur=param), 6:   avgFreqDB(dureeHold=param)}
+        # Renvoie trop d'erreurs
+        # switch(k){
+        # 
+        #     case 0:  tab = avgFreqDB(nomPapier=param); break;
+        #     case 1:  tab = avgFreqDB(nomCondexp=param); break;
+        #     case 2:  tab = avgFreqDB(nomSurface=param); break;
+        #     case 3:  tab = avgFreqDB(diametre=param); break;
+        #     case 4:  tab = avgFreqDB(longueur=param); break;
+        #     case 5:  tab = avgFreqDB(largeur=param); break;
+        #     case 6:  tab = avgFreqDB(dureeHold=param); break;
+        # } #NE MARCHE PAS EN PYTHON
+           
+        # tab = switch[k]()   
+        
+        if k==0:
+            tab = avgFreqDB(nomPapier=param)
+        if k==1:
+            tab = avgFreqDB(nomCondexp=param)
+        if k==2:
+            tab = avgFreqDB(nomSurface=param)
+        if k==3:
+            tab = avgFreqDB(diametre=param)
+        if k==4:
+            tab = avgFreqDB(longueur=param)
+        if k==5:
+            tab = avgFreqDB(largeur=param)
+        if k==6:
+            tab = avgFreqDB(dureeHold=param)
+           
+        
+        # print(tab)
+        FileTab.append([tab[0],tab[1],tab[2]])
+    
+    
+    return FileTab, Lparam
+
+
+# FileTab = [[t,v],[t,v]] : liste des times + event
+
+
+# Larger example that inserts many records at a time
+# purchases = [('2006-03-28', 'BUY', 'IBM', 1000, 45.00),
+#              ('2006-04-05', 'BUY', 'MSFT', 1000, 72.00),
+#              ('2006-04-06', 'SELL', 'IBM', 500, 53.00),
+#             ]
+# c.executemany('INSERT INTO stocks VALUES (?,?,?,?,?)', purchases)
+
+# To retrieve data after executing a SELECT statement, you can either treat the cursor as an iterator, call the cursor’s fetchone() method to retrieve a single matching row, or call fetchall() to get a list of the matching rows.
+
+# This example uses the iterator form:
+# 
+# >>> for row in c.execute('SELECT * FROM stocks ORDER BY price'):
+#         print row
+# 
+# (u'2006-01-05', u'BUY', u'RHAT', 100, 35.14)
+# (u'2006-03-28', u'BUY', u'IBM', 1000, 45.0)
+# (u'2006-04-06', u'SELL', u'IBM', 500, 53.0)
+# (u'2006-04-05', u'BUY', u'MSFT', 1000, 72.0)
+
+
+
+
+
+
+
+
+
+## Nouvelle affichage avec avgFreqDB
+
+
+def printCourbes3D(ax, k=4):
+    # On affiche tout :
+    tab, Lparam = selectData(k) 
+    
+    # Ou on affiche les moyennes
+    # tab = avgFreqDB(conditionCourbe[k])
+    # tab = avgFreqDB(nomPapier="A4",diametre=0.002)
+    # print(tab)
+    TIME=[]
+    FREQ=[]
+    PARAM=[Laparam for i in range(len(TIME))]
+    yticks = [i for i in range(len(tab))]
+    
+    for i in range(len(tab)):
+            
+        e = tab[i] # e : tableau des [[T],[V]]
+        xts = e[0]
+        ys = e[1]
+        yvars = e[2]
+        FREQ.append(ys)
+        TIME.append(xts)
+        # You can provide either a single color or an array with the same length as
+        # xs and ys. To demonstrate this, we color the first bar of each set cyan.
+        # print(FREQ,len(FREQ))
+        # print("xts :",xts)
+        cs = ['b'] * len(xts)
+        #cs[0] = 'c'
+        param = Lparam[i]
+        # Plot the bar graph given by xs and ys on the plane y=k with 80% opacity.
+        ax.plot3D(xts, ys, zs=i, zdir='y', c=pltColors[i], alpha=0.8, label = param)
+        ax.plot3D(xts, yvars*ys, zs=i, zdir='y',c=pltColors[i], alpha=0.4, linestyle='dashed')
+        # ax.bar(xts, ys, zs=param, zdir='y', color=cs, alpha=0.8)
+    ax.set_title(conditionCourbe[k]) #Optionel => Déjà dans les y
+    # ax.legend() #Pas besoin => Déjà dans les y
+    ax.set_xlabel('Time')
+    ax.set_ylabel(conditionCourbe[k])
+    ax.set_zlabel('Frequency')
+    
+    # On the y axis let's only label the discrete values that we have data for.
+    ax.set_yticks(yticks)
+    ax.set_yticklabels(Lparam)
+    
+    # plt.show()
+
+
+def printCourbes2D(dim3=0):
+    fig = plt.figure()
+
+    for k in range(len(conditionCourbe)):
+        tab, Lparam = selectData(k) 
+    
+        ax = fig.add_subplot(2,len(conditionCourbe)/2+1,k+1)
+
+        TIME=[]
+        FREQ=[]
+        PARAM=[Laparam for i in range(len(TIME))]
+        yticks = [i for i in range(len(tab))]
+        
+        for i in range(len(tab)):
+            # for j in range(len(tab[i])):
+            
+            e = tab[i] # e : tableau des [[T],[V]]
+            xts = e[0]
+            ys = e[1]
+            yvar = e[2]
+            FREQ.append(ys)
+            TIME.append(xts)
+            # You can provide either a single color or an array with the same length as
+            # xs and ys. To demonstrate this, we color the first bar of each set cyan.=
+            cs = ['b'] * len(xts)
+            #cs[0] = 'c'
+            param = Lparam[i]
+            
+            ax.plot(xts, ys, pltColors[i], alpha=0.8, label = param)
+            ax.plot(xts, yvar*ys, pltColors[i]+':', alpha=0.8)
+        ax.set_title(conditionCourbe[k])
+        ax.legend()
+        ax.set_xlabel('Time')
+        ax.set_ylabel('Frequency')
+    
+    # On the y axis let's only label the discrete values that we have data for.
+    # ax.set_yticks(yticks)
+    # ax.set_yticklabels(Lparam)
+    # plt.tight_layout()
+    plt.show()
+
+
+
+
+##Affichage final
 
 fig = plt.figure()
 for k in range(len(conditionCourbe)):
-    
-    
     ax = fig.add_subplot(2,len(conditionCourbe)/2+1,k+1, projection='3d')
+    
     printCourbes3D(ax, k)
+    
+
 plt.show()
+printCourbes2D()
+
+### Test
+# fig = plt.figure()
+# for k in range(4,5):
+#     ax = fig.add_subplot(2,len(conditionCourbe)/2+1,k+1, projection='3d')
+#     printCourbes3D(ax, k)
+# plt.show()
+
+
