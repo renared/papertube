@@ -1,6 +1,6 @@
 n'hésitez pas à demander à contribuer
 
-Team Phelma du papier : Bastien Imbert et Yann Bourdin
+Team Phelma du papier : Bastien Imbert (bastien.imbert@phelma.grenoble-inp.fr) et Yann "renared" Bourdin (yann.bourdin@phelma.grenoble-inp.fr)
 
 # Papertube !
 
