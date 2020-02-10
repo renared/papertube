@@ -1,4 +1,8 @@
-﻿# Papertube !
+n'hésitez pas à demander à contribuer
+
+Team Phelma du papier : Bastien Imbert et Yann Bourdin
+
+# Papertube !
 
 **Bien tout lire (rapidement en diagonale) avant de commencer à filmer et tout**
 
